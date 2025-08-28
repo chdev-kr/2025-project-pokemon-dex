@@ -86,15 +86,62 @@ class PokemonDex {
   }
 
   // 포켓몬 로드 함수 (아직 안 만듦)
-  loadPokemon(id) {
-    console.log(`${id}번 포켓몬 로드!`);
-    // 나중에 구현할 예정
+  async loadPokemon(id) {
+    try {
+      console.log(`${id}번 포켓몬 로드 중`);
+
+      // PokeAPI에서 포켓몬 정보 가져오기
+      const res = await fetch(`${API_URL}/${id}`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error("포켓몬 정보 가져오기 실패");
+      }
+      console.log("포켓몬 정보 가져오기 성공", data);
+
+      // 포캣몬 정보 표시
+      this.updatePokemonDisplay(data);
+    } catch (error) {
+      console.error("포켓몬 로드 실패", error);
+    }
+  }
+
+  updatePokemonDisplay(data) {
+    // 1. 포켓몬 이미지 설정(front_default가 기본 이미지, front_shiny 등 다양한 종류 있음)
+    this.pokemonImage.src = data.sprites.front_default;
+    this.pokemonImage.alt = data.name;
+
+    // 2. 포켓몬 번호 설정(padStart 메서드: 앞에 0을 붙여서 3자리로 만듦)
+    this.pokemonNumber.textContent = `${String(data.id).padStart(3, "0")}`;
+
+    // 3. 포켓몬 이름 설정
+    this.pokemonName.textContent = data.name;
+
+    // 4. 포켓몬 타입 설정(타입 처리가 관건)
+    this.updatePokemonTypes(data.types);
+    // this.pokemonTypes.textContent = data.types;
+    //   .map((type) => type.type.name)
+    //   .join(", ");
   }
 
   // 검색 함수 (아직 안 만듦)
   searchPokemon() {
     console.log("검색 기능!");
     // 나중에 구현할 예정
+  }
+
+  // 4-1. 타입 정보 업데이트
+  updatePokemonTypes(types) {
+    // 기존 타입 제거
+    this.pokemonTypes.innerHTML = "";
+
+    // 새로운 타입 추가
+    types.forEach((pokemonType) => {
+      const typeSpan = document.createElement("span");
+      typeSpan.className = `type ${pokemonType.type.name}`;
+      typeSpan.textContent = pokemonType.type.name;
+      this.pokemonTypes.appendChild(typeSpan);
+    });
   }
 }
 
