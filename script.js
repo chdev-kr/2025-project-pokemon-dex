@@ -112,7 +112,7 @@ class PokemonDex {
     this.pokemonImage.alt = data.name;
 
     // 2. 포켓몬 번호 설정(padStart 메서드: 앞에 0을 붙여서 3자리로 만듦)
-    this.pokemonNumber.textContent = `${String(data.id).padStart(3, "0")}`;
+    this.pokemonNumber.textContent = `#${String(data.id).padStart(3, "0")}`;
 
     // 3. 포켓몬 이름 설정
     this.pokemonName.textContent = data.name;
@@ -139,12 +139,37 @@ class PokemonDex {
     types.forEach((pokemonType) => {
       const typeSpan = document.createElement("span");
       typeSpan.className = `type ${pokemonType.type.name}`;
-      typeSpan.textContent = pokemonType.type.name;
+      typeSpan.textContent = this.getKoreanTypeName(pokemonType.type.name);
       this.pokemonTypes.appendChild(typeSpan);
     });
   }
-}
 
+  // 4-2. 영어 타입명을 한국어로 변환 (새로 추가)
+  getKoreanTypeName(englishType) {
+    const typeMap = {
+      normal: "노말",
+      fire: "불꽃",
+      water: "물",
+      electric: "전기",
+      grass: "풀",
+      ice: "얼음",
+      fighting: "격투",
+      poison: "독",
+      ground: "땅",
+      flying: "비행",
+      psychic: "에스퍼",
+      bug: "벌레",
+      rock: "바위",
+      ghost: "고스트",
+      dragon: "드래곤",
+      dark: "악",
+      steel: "강철",
+      fairy: "페어리",
+    };
+    // 매핑 한국어 있으면 반환하고 아니면 영어 그대로 반환(OR 연산자)
+    return typeMap[englishType] || englishType;
+  }
+}
 // <------- 클래스 끝 ------------>
 
 // 페이지 로드 시 포켓몬 도감 초기화
