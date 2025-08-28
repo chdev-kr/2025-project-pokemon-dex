@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>포켓몬 도감 - PokéDex</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="pokedex-container">
+      <!-- 메인 도감 본체 -->
+      <div class="pokedex-body">
+        <!-- 왼쪽 패널 -->
+        <div class="left-panel">
+          <div class="screen-container">
+            <div class="screen">
+              <div class="screen-content">
+                <div class="pokemon-image-container">
+                  <img id="pokemon-image" src="" alt="포켓몬 이미지" />
+                </div>
+                <div class="pokemon-info">
+                  <div class="pokemon-number">
+                    #<span id="pokemon-number">001</span>
+                  </div>
+                  <div class="pokemon-name" id="pokemon-name">이상해씨</div>
+                  <div class="pokemon-types" id="pokemon-types">
+                    <span class="type grass">풀</span>
+                    <span class="type poison">독</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="controls">
+            <div class="d-pad">
+              <button class="d-pad-up" id="prev-pokemon">▲</button>
+              <div class="d-pad-middle">
+                <button class="d-pad-left" id="prev-page">◀</button>
+                <button class="d-pad-right" id="next-page">▶</button>
+              </div>
+              <button class="d-pad-down" id="next-pokemon">▼</button>
+            </div>
+
+            <div class="buttons">
+              <button class="btn btn-a" id="search-btn">A</button>
+              <button class="btn btn-b" id="random-btn">B</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 오른쪽 패널 -->
+        <div class="right-panel">
+          <div class="stats-screen">
+            <div class="stats-header">포켓몬 정보</div>
+            <div class="stats-content">
+              <div class="stat-row">
+                <span class="stat-label">키:</span>
+                <span class="stat-value" id="pokemon-height">0.7m</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-label">몸무게:</span>
+                <span class="stat-value" id="pokemon-weight">6.9kg</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-label">특성:</span>
+                <span class="stat-value" id="pokemon-ability">심록</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-label">서식지:</span>
+                <span class="stat-value" id="pokemon-habitat">초원</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="search-section">
+            <div class="search-header">검색</div>
+            <div class="search-input-container">
+              <input
+                type="text"
+                id="search-input"
+                placeholder="포켓몬 이름 또는 번호"
+              />
+              <button id="search-submit">검색</button>
+            </div>
+          </div>
+
+          <div class="pokemon-list">
+            <div class="list-header">포켓몬 목록</div>
+            <div class="list-content" id="pokemon-list">
+              <!-- 포켓몬 목록이 여기에 동적으로 추가됩니다 -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 하단 LED 표시등 -->
+      <div class="led-indicators">
+        <div class="led led-red"></div>
+        <div class="led led-yellow"></div>
+        <div class="led led-green"></div>
+      </div>
+    </div>
+
+    <!-- 로딩 오버레이 -->
+    <div class="loading-overlay" id="loading-overlay">
+      <div class="loading-text">로딩 중...</div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
