@@ -23,8 +23,14 @@ class PokemonDex {
     this.searchInput = document.getElementById("search-input");
     this.searchSubmit = document.getElementById("search-submit");
 
+    // 음악 관련 DOM 요소들
+    this.video = document.getElementById("background-music");
+    this.musicBtn = document.getElementById("music-btn");
+    this.isMusicPlaying = false;
+
     // 초기화
     this.initializePokedex();
+    this.initializeMusic(); // 음악 초기화 추가
   }
 
   // 초기화 함수
@@ -60,7 +66,7 @@ class PokemonDex {
 
     // 다음 포켓몬 버튼
     this.nextBtn.addEventListener("click", () => {
-      if (this.currentPokemonId < this.totalPokemon) {
+      if (this.currentPokemonId < 1000) {
         this.currentPokemonId++;
         this.loadPokemon(this.currentPokemonId);
       }
@@ -68,7 +74,8 @@ class PokemonDex {
 
     // 랜덤 버튼
     this.randomBtn.addEventListener("click", () => {
-      this.currentPokemonId = Math.floor(Math.random() * this.totalPokemon) + 1;
+      // 정수 1~ 1000의 값 랜덤으로 가져오기
+      this.currentPokemonId = Math.floor(Math.random() * 1000) + 1;
       this.loadPokemon(this.currentPokemonId);
     });
 
@@ -108,7 +115,15 @@ class PokemonDex {
 
   updatePokemonDisplay(data) {
     // 1. 포켓몬 이미지 설정(front_default가 기본 이미지, front_shiny 등 다양한 종류 있음)
-    this.pokemonImage.src = data.sprites.front_default;
+    // this.pokemonImage.src = data.sprites.front_default;
+    const gifUrl = `https://projectpokemon.org/images/normal-sprite/${data.name}.gif`;
+    const apiUrl = data.sprites.front_default;
+
+    // GIF가 있으면 사용, 없으면 API 이미지 사용
+    this.pokemonImage.src = gifUrl;
+    this.pokemonImage.onerror = () => {
+      this.pokemonImage.src = apiUrl;
+    };
     this.pokemonImage.alt = data.name;
 
     // 2. 포켓몬 번호 설정(padStart 메서드: 앞에 0을 붙여서 3자리로 만듦)
@@ -124,10 +139,19 @@ class PokemonDex {
     //   .join(", ");
   }
 
-  // 검색 함수 (아직 안 만듦)
-  searchPokemon() {
-    console.log("검색 기능!");
-    // 나중에 구현할 예정
+  // ================== 검색 기능 ==================
+  async searchPokemon() {
+    const searchWord = this.searchInput.value.trim();
+    if (!searchWord) {
+      alert("검색어를 입력해주세요");
+      return;
+    }
+    try {
+      console.log(`${searchWord} 검색 중...`);
+    } catch (error) {
+      // 나중에 구현할 예정
+      console.error("검색 실패", error);
+    }
   }
 
   // 4-1. 타입 정보 업데이트
@@ -168,6 +192,92 @@ class PokemonDex {
     };
     // 매핑 한국어 있으면 반환하고 아니면 영어 그대로 반환(OR 연산자)
     return typeMap[englishType] || englishType;
+  }
+
+  // ================== 음악 기능 ==================
+
+  // 음악 초기화
+  initializeMusic() {
+    this.video.volume = 0.5; // 볼륨을 50%로 설정
+
+    // 비디오 로드 완료 후 준비
+    this.video.addEventListener("loadeddata", () => {
+      console.log("음악 파일 로드 완료");
+      console.log("비디오 준비 상태:", this.video.readyState);
+    });
+
+    // 에러 처리
+    this.video.addEventListener("error", (e) => {
+      console.error("음악 파일 로드 실패:", e);
+    });
+
+    // 사용자 상호작용 감지 (브라우저 자동 재생 정책 우회)
+    document.addEventListener(
+      "click",
+      () => {
+        if (this.video.muted) {
+          this.video.muted = false;
+          console.log("사용자 상호작용으로 음소거 해제됨");
+        }
+      },
+      { once: true }
+    );
+
+    this.musicBtn.addEventListener("click", () => {
+      this.toggleMusic();
+    });
+  }
+
+  // 음악 토글 (재생/일시정지)
+  toggleMusic() {
+    if (this.isMusicPlaying) {
+      this.stopMusic();
+    } else {
+      this.playMusic();
+    }
+  }
+
+  // 음악 재생
+  playMusic() {
+    console.log("=== 음악 재생 시도 ===");
+    console.log("재생 전 음소거 상태:", this.video.muted);
+    console.log("재생 전 볼륨:", this.video.volume);
+    console.log("재생 전 일시정지 상태:", this.video.paused);
+
+    this.video.muted = false; // 음소거 해제
+    this.video.volume = 0.3; // 볼륨 재설정
+
+    console.log("음소거 해제 후 상태:", this.video.muted);
+    console.log("볼륨 설정 후:", this.video.volume);
+
+    this.video
+      .play()
+      .then(() => {
+        console.log("음악 재생 시작 성공!");
+        console.log("재생 후 일시정지 상태:", this.video.paused);
+        console.log("재생 후 음소거 상태:", this.video.muted);
+        console.log("재생 후 볼륨:", this.video.volume);
+
+        this.isMusicPlaying = true;
+        this.musicBtn.classList.add("playing");
+        // CSS에서 자동으로 포켓볼 GIF 표시됨
+      })
+      .catch((error) => {
+        console.error("음악 재생 실패:", error);
+        console.error("에러 상세:", error.message);
+        alert("음악 재생에 실패했습니다. 브라우저 설정을 확인해주세요.");
+      });
+  }
+
+  // 음악 정지
+  stopMusic() {
+    this.video.pause();
+    this.video.muted = true; // 음소거 처리
+    this.isMusicPlaying = false;
+    this.musicBtn.classList.remove("playing");
+    // CSS에서 자동으로 ⏸️ 아이콘 표시됨
+
+    console.log("음악 정지");
   }
 }
 // <------- 클래스 끝 ------------>
