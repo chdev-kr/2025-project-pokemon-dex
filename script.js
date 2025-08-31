@@ -31,12 +31,16 @@ class PokemonDex {
     // 초기화
     this.initializePokedex();
     this.initializeMusic(); // 음악 초기화 추가
+
+    // 로딩 스피너 요소 추가
+    this.imageLoadingSpinner = document.getElementById("image-loading-spinner");
   }
 
   // 초기화 함수
   async initializePokedex() {
     await this.getTotalPokemon(); // 포켓몬 개수 가져오기
     this.setupEventListeners(); // 버튼 이벤트 설정
+    this.setupImageLoadingEvent(); // 이미지 로딩 이벤트 설정
     this.loadPokemon(this.currentPokemonId); // 첫번째 포켓몬 로드
   }
 
@@ -114,6 +118,41 @@ class PokemonDex {
   }
 
   updatePokemonDisplay(data) {
+    console.log("=== 포켓몬 업데이트 시작 ===");
+    console.log("포켓몬 데이터:", data);
+    console.log("이미지 URL:", data.sprites.front_default);
+    console.log(
+      "현재 스피너 상태:",
+      this.imageLoadingSpinner.classList.contains("hidden")
+    );
+
+    this.showImageLoading();
+
+    // bind() 사용으로 this 바인딩
+    this.pokemonImage.onload = function () {
+      console.log("✅ 이미지 로드 성공!");
+      console.log(
+        "이미지 크기:",
+        this.pokemonImage.naturalWidth,
+        "x",
+        this.pokemonImage.naturalHeight
+      );
+      this.hiddenImageLoading();
+    }.bind(this);
+
+    this.pokemonImage.onerror = function (error) {
+      console.log("❌ 이미지 로드 실패!");
+      console.log("에러 정보:", error);
+      console.log("시도한 URL:", this.pokemonImage.src);
+      this.hiddenImageLoading();
+    }.bind(this);
+
+    const timestamp = new Date().getTime();
+    const imageUrl = `${data.sprites.front_default}?t=${timestamp}`;
+    console.log("🔄 이미지 URL 설정:", imageUrl);
+
+    this.pokemonImage.src = imageUrl;
+
     // 1. 포켓몬 이미지 설정(front_default가 기본 이미지, front_shiny 등 다양한 종류 있음)
     // this.pokemonImage.src = data.sprites.front_default;
     const gifUrl = `https://projectpokemon.org/images/normal-sprite/${data.name}.gif`;
@@ -279,7 +318,37 @@ class PokemonDex {
 
     console.log("음악 정지");
   }
+
+  // ================== 이미지 로딩 기능 ==================
+
+  // 이미지 로딩 시작
+  showImageLoading() {
+    console.log("이미지 로딩 시작");
+    this.imageLoadingSpinner.classList.remove("hidden");
+    this.pokemonImage.classList.remove("loaded");
+  }
+
+  // 이미지 로딩 완료
+  hiddenImageLoading() {
+    console.log("이미지 로딩 완료");
+    this.imageLoadingSpinner.classList.add("hidden");
+    this.pokemonImage.classList.add("loaded");
+  }
+
+  // 이미지 로딩 이벤트 설정
+  setupImageLoadingEvent() {
+    this.pokemonImage.addEventListener("load", () => {
+      console.log("로딩 완료");
+      this.hiddenImageLoading();
+    });
+
+    this.pokemonImage.addEventListener("error", () => {
+      this.hiddenImageLoading();
+      console.error("로딩 실패");
+    });
+  }
 }
+
 // <------- 클래스 끝 ------------>
 
 // 페이지 로드 시 포켓몬 도감 초기화

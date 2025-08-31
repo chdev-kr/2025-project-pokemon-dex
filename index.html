@@ -20,8 +20,15 @@
             <div class="screen">
               <div class="screen-content">
                 <div class="pokemon-image-container">
+                  <div class="loading-spinner" id="image-loading-spinner">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                  </div>
+
                   <img id="pokemon-image" src="" alt="포켓몬 이미지" />
                 </div>
+
                 <div class="pokemon-info">
                   <div class="pokemon-number">
                     <span id="pokemon-number">001</span>
@@ -126,29 +133,5 @@
     </div>
 
     <script src="script.js"></script>
-    <script>
-      async function findMaxPokemonId() {
-        let maxId = 1;
-
-        for (let i = 1; i <= 1500; i += 50) {
-          // 50개씩 점프해서 빠르게 확인
-          try {
-            const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${i}`);
-            if (res.ok) {
-              maxId = i;
-            } else {
-              break; // 404가 나오면 그 이전이 최대값
-            }
-          } catch (error) {
-            break;
-          }
-        }
-
-        console.log("실제 접근 가능한 최대 ID:", maxId);
-        return maxId;
-      }
-
-      findMaxPokemonId();
-    </script>
   </body>
 </html>
