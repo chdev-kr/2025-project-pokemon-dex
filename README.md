@@ -2,6 +2,34 @@
 
 레트로 게임보이 스타일의 포켓몬 도감 웹 애플리케이션입니다. PokeAPI를 활용하여 포켓몬 정보를 실시간으로 조회하고, 로딩 애니메이션과 배경음악 기능을 제공합니다.
 
+// 포켓몬 데이터 가져오기
+async function checkPokemonData() {
+try {
+const response = await fetch('https://pokeapi.co/api/v2/pokemon/1');
+const data = await response.json();
+
+    console.log('=== 포켓몬 데이터 구조 ===');
+    console.log('전체 데이터:', data);
+    console.log('사용 가능한 키들:', Object.keys(data));
+
+    // 주요 속성들 자세히 보기
+    console.log('=== 주요 속성들 ===');
+    console.log('ID:', data.id);
+    console.log('이름:', data.name);
+    console.log('키:', data.height);
+    console.log('몸무게:', data.weight);
+    console.log('타입:', data.types);
+    console.log('특성:', data.abilities);
+    console.log('스프라이트:', data.sprites);
+
+} catch (error) {
+console.error('데이터 가져오기 실패:', error);
+}
+}
+
+// 함수 실행
+checkPokemonData();
+
 ## 🌟 주요 기능
 
 ### 📱 핵심 기능

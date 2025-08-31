@@ -14,6 +14,10 @@ class PokemonDex {
     this.pokemonNumber = document.getElementById("pokemon-number");
     this.pokemonName = document.getElementById("pokemon-name");
     this.pokemonTypes = document.getElementById("pokemon-types");
+    this.pokemonHeight = document.getElementById("pokemon-height");
+    this.pokemonWeight = document.getElementById("pokemon-weight");
+    this.pokemonAbility = document.getElementById("pokemon-ability");
+    this.pokemonExperience = document.getElementById("pokemon-experience");
 
     // 버튼 DOM 요소들
     this.prevBtn = document.getElementById("prev-pokemon");
@@ -183,6 +187,18 @@ class PokemonDex {
     // this.pokemonTypes.textContent = data.types;
     //   .map((type) => type.type.name)
     //   .join(", ");
+
+    // 5. 포켓몬 키 설정
+    this.pokemonHeight.textContent = `${data.height / 10}m`;
+
+    // 6. 포켓몬 몸무게 설정
+    this.pokemonWeight.textContent = `${data.weight / 10}kg`;
+
+    // 7. 포켓몬 특성 설정
+    this.updatePokemonAbility(data);
+
+    // 8. 포켓몬 서식지 설정
+    this.pokemonExperience.textContent = data.base_experience;
   }
 
   // ================== 검색 기능 ==================
@@ -214,6 +230,34 @@ class PokemonDex {
     });
   }
 
+  // 특성 정보 업데이트
+  updatePokemonAbility(data) {
+    // data.abilities가 존재하고, 배열에 데이터가 있는지 확인
+    if (data.abilities && data.abilities.length > 0) {
+      // find(): 배열에서 조건에 맞는 첫 번째 요소를 찾는 함수
+      // !ability.is_hidden은 is_hidden이 false인 요소를 찾는 조건
+      const mainAbility = data.abilities.find((ability) => !ability.is_hidden);
+
+      // 영어 특성 이름 가져온 후 -> 한국어로 변환 -> 화면에 표시
+      if (mainAbility) {
+        const koreanAbilityName = this.getKoreanAbilityName(
+          mainAbility.ability.name
+        );
+        this.pokemonAbility.textContent = koreanAbilityName;
+      } else {
+        // 주요 특성이 없으면 첫 번째 특성 사용
+        // 첫 번째 특성을 사용하되, 숨겨진 특성임을 표시
+        const hiddenAbility = data.abilities[0];
+        const koreanAbilityName = this.getKoreanAbilityName(
+          hiddenAbility.ability.name
+        );
+        this.pokemonAbility.textContent = `${koreanAbilityName} (숨겨진 특성)`;
+      }
+    } else {
+      this.pokemonAbility.textContent = "알 수 없음";
+    }
+  }
+
   // 4-2. 영어 타입명을 한국어로 변환 (새로 추가)
   getKoreanTypeName(englishType) {
     const typeMap = {
@@ -238,6 +282,122 @@ class PokemonDex {
     };
     // 매핑 한국어 있으면 반환하고 아니면 영어 그대로 반환(OR 연산자)
     return typeMap[englishType] || englishType;
+  }
+
+  // 특성 이름을 한국어로 변환하는 함수
+  getKoreanAbilityName(englishName) {
+    const abilityMap = {
+      // 일반 특성들
+      overgrow: "심록",
+      chlorophyll: "엽록소",
+      blaze: "맹화",
+      "solar-power": "선파워",
+      torrent: "급류",
+      "rain-dish": "습기",
+      "shield-dust": "인분",
+      "run-away": "도주",
+      "shed-skin": "탈피",
+      "compound-eyes": "복안",
+      swarm: "벌레의알림",
+      "keen-eye": "날카로운눈",
+      "tangled-feet": "갈지자걸음",
+      "big-pecks": "대담",
+      pickup: "픽업",
+      technician: "테크니션",
+      limber: "유연",
+      "cloud-nine": "날씨부정",
+      "vital-spirit": "의기양양",
+      "white-smoke": "하얀연기",
+      pressure: "프레셔",
+      "clear-body": "클리어바디",
+      "natural-cure": "자연회복",
+      "serene-grace": "하늘의은총",
+      "swift-swim": "쓸쓸한가슴",
+      "water-absorb": "저수",
+      "volt-absorb": "전기흡수",
+      "flash-fire": "타오르는불꽃",
+      "shield-dust": "인분",
+      "own-tempo": "마이페이스",
+      sturdy: "옹골참",
+      "early-bird": "일찍일어남",
+      "flame-body": "불꽃몸",
+      "magma-armor": "마그마의무장",
+      "water-veil": "수의베일",
+      "magnet-pull": "자석잡기",
+      soundproof: "방음",
+      "rain-dish": "습기",
+      "sand-stream": "모래날림",
+      pressure: "프레셔",
+      "thick-fat": "두꺼운지방",
+      "early-bird": "일찍일어남",
+      "flame-body": "불꽃몸",
+      "run-away": "도주",
+      "keen-eye": "날카로운눈",
+      "hyper-cutter": "괴력집게",
+      pickup: "픽업",
+      truant: "게으름",
+      hustle: "의욕",
+      "cute-charm": "헤롱헤롱",
+      plus: "플러스",
+      minus: "마이너스",
+      forecast: "기분파",
+      "sticky-hold": "점착",
+      "shed-skin": "탈피",
+      guts: "근성",
+      "marvel-scale": "이상한비늘",
+      "liquid-ooze": "해감액",
+      overgrow: "심록",
+      chlorophyll: "엽록소",
+      "volt-absorb": "전기흡수",
+      "lightning-rod": "피뢰침",
+      "serene-grace": "하늘의은총",
+      "swift-swim": "쓸쓸한가슴",
+      chlorophyll: "엽록소",
+      "early-bird": "일찍일어남",
+      "flame-body": "불꽃몸",
+      "run-away": "도주",
+      "keen-eye": "날카로운눈",
+      "hyper-cutter": "괴력집게",
+      pickup: "픽업",
+      truant: "게으름",
+      hustle: "의욕",
+      "cute-charm": "헤롱헤롱",
+      plus: "플러스",
+      minus: "마이너스",
+      forecast: "기분파",
+      "sticky-hold": "점착",
+      "shed-skin": "탈피",
+      guts: "근성",
+      "marvel-scale": "이상한비늘",
+      "liquid-ooze": "해감액",
+      overgrow: "심록",
+      chlorophyll: "엽록소",
+      "volt-absorb": "전기흡수",
+      "lightning-rod": "피뢰침",
+      "serene-grace": "하늘의은총",
+      "swift-swim": "쓸쓸한가슴",
+      chlorophyll: "엽록소",
+      "early-bird": "일찍일어남",
+      "flame-body": "불꽃몸",
+      "run-away": "도주",
+      "keen-eye": "날카로운눈",
+      "hyper-cutter": "괴력집게",
+      pickup: "픽업",
+      truant: "게으름",
+      hustle: "의욕",
+      "cute-charm": "헤롱헤롱",
+      plus: "플러스",
+      minus: "마이너스",
+      forecast: "기분파",
+      "sticky-hold": "점착",
+      "shed-skin": "탈피",
+      guts: "근성",
+      "marvel-scale": "이상한비늘",
+      "liquid-ooze": "해감액",
+      levitate: "공중부양",
+    };
+
+    return abilityMap[englishName] || englishName; // 매핑이 없으면 영어 이름 반환
   }
 
   // ================== 음악 기능 ==================
