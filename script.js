@@ -18,6 +18,8 @@ class PokemonDex {
     // 버튼 DOM 요소들
     this.prevBtn = document.getElementById("prev-pokemon");
     this.nextBtn = document.getElementById("next-pokemon");
+    this.prev100Btn = document.getElementById("prev-page");
+    this.next100Btn = document.getElementById("next-page");
     this.randomBtn = document.getElementById("random-btn");
     this.searchBtn = document.getElementById("search-btn");
     this.searchInput = document.getElementById("search-input");
@@ -60,7 +62,7 @@ class PokemonDex {
 
   // 이벤트 리스너 설정
   setupEventListeners() {
-    // 이전 포켓몬 버튼
+    // 이전 포켓몬 버튼 ▼
     this.prevBtn.addEventListener("click", () => {
       if (this.currentPokemonId > 1) {
         this.currentPokemonId--;
@@ -68,7 +70,7 @@ class PokemonDex {
       }
     });
 
-    // 다음 포켓몬 버튼
+    // 다음 포켓몬 버튼 ▲
     this.nextBtn.addEventListener("click", () => {
       if (this.currentPokemonId < 1000) {
         this.currentPokemonId++;
@@ -76,6 +78,21 @@ class PokemonDex {
       }
     });
 
+    // 100개 이전 포켓몬 버튼 ◀
+    this.prev100Btn.addEventListener("click", () => {
+      if (this.currentPokemonId > 100) {
+        this.currentPokemonId = this.currentPokemonId - 100;
+        this.loadPokemon(this.currentPokemonId);
+      }
+    });
+
+    // 100개 다음 포켓몬 버튼 ▶
+    this.next100Btn.addEventListener("click", () => {
+      if (this.currentPokemonId < 901) {
+        this.currentPokemonId += 100;
+        this.loadPokemon(this.currentPokemonId);
+      }
+    });
     // 랜덤 버튼
     this.randomBtn.addEventListener("click", () => {
       // 정수 1~ 1000의 값 랜덤으로 가져오기
@@ -130,20 +147,10 @@ class PokemonDex {
 
     // bind() 사용으로 this 바인딩
     this.pokemonImage.onload = function () {
-      console.log("✅ 이미지 로드 성공!");
-      console.log(
-        "이미지 크기:",
-        this.pokemonImage.naturalWidth,
-        "x",
-        this.pokemonImage.naturalHeight
-      );
       this.hiddenImageLoading();
     }.bind(this);
 
     this.pokemonImage.onerror = function (error) {
-      console.log("❌ 이미지 로드 실패!");
-      console.log("에러 정보:", error);
-      console.log("시도한 URL:", this.pokemonImage.src);
       this.hiddenImageLoading();
     }.bind(this);
 
