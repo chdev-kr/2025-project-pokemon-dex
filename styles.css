@@ -26,45 +26,6 @@ body {
   position: relative;
 }
 
-.pokemon-image-container {
-  /* 스피너의 기준점을 컨테이너로 설정 */
-  position: relative;
-  width: 200px;
-  height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
-}
-
-.loading-spinner {
-  display: flex;
-  justify-content: center;
-  /* 스피너를 이미지 위에 겹치게 배치 */
-  position: absolute;
-  z-index: 10;
-  div {
-    width: 1rem;
-    height: 1rem;
-    margin: 2rem 0.3rem;
-    background: #e74c3c;
-    border-radius: 50%;
-    animation: 0.9s bounce infinite alternate;
-
-    &:nth-child(2) {
-      animation-delay: 0.3s;
-    }
-
-    &:nth-child(3) {
-      animation-delay: 0.6s;
-    }
-  }
-}
-
-.loading-spinner.hidden {
-  display: none;
-}
-
 /* 도감 본체 */
 .pokedex-body {
   display: flex;
@@ -123,10 +84,11 @@ body {
   gap: 15px;
 }
 
-/* 포켓몬 이미지 */
+/* 포켓몬 이미지 컨테이너 */
 .pokemon-image-container {
-  width: 20vw;
-  height: 20vh;
+  position: relative;
+  width: 150px;
+  height: 150px;
   background: #ecf0f1;
   border-radius: 50%;
   display: flex;
@@ -134,12 +96,44 @@ body {
   align-items: center;
   border: 3px solid #bdc3c7;
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+  margin: 0 auto;
 }
 
+/* 로딩 스피너 */
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  z-index: 10;
+}
+
+.loading-spinner div {
+  width: 1rem;
+  height: 1rem;
+  margin: 2rem 0.3rem;
+  background: #e74c3c;
+  border-radius: 50%;
+  animation: 0.9s bounce infinite alternate;
+}
+
+.loading-spinner div:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.loading-spinner div:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
+.loading-spinner.hidden {
+  display: none;
+}
+
+/* 포켓몬 이미지 */
 #pokemon-image {
   opacity: 0;
   transition: opacity 0.3s ease;
-  width: 30%;
+  width: 58%;
+  height: 100%;
   object-fit: contain;
 }
 
@@ -148,7 +142,7 @@ body {
   opacity: 1;
 }
 
-/* 스피너 회전 애니메이션 */
+/* 스피너 애니메이션 */
 @keyframes bounce {
   to {
     opacity: 0.3;
@@ -682,565 +676,6 @@ body {
   opacity: 0;
   pointer-events: none;
   z-index: -1;
-}
-
-/* 반응형 디자인 */
-@media (max-width: 768px) {
-  .pokedex-body {
-    flex-direction: column;
-  }
-
-  .controls {
-    justify-content: center;
-  }
-
-  .pokedex-container {
-    padding: 10px;
-  }
-
-  .screen {
-    min-height: 250px;
-  }
-
-  .pokemon-image-container {
-    width: 120px;
-    height: 120px;
-  }
-
-  #pokemon-image {
-    width: 100px;
-    height: 100px;
-  }
-} /* 기본 리셋 및 폰트 설정 */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: "Press Start 2P", cursive;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-}
-
-/* 포켓몬 도감 컨테이너 */
-.pokedex-container {
-  width: 100%;
-  max-width: 1200px;
-  background: #e74c3c;
-  border-radius: 20px;
-  padding: 20px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-  position: relative;
-}
-
-/* 도감 본체 */
-.pokedex-body {
-  display: flex;
-  gap: 20px;
-  background: #e74c3c;
-  border-radius: 15px;
-  padding: 20px;
-  border: 4px solid #c0392b;
-}
-
-/* 왼쪽 패널 */
-.left-panel {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-/* 스크린 컨테이너 */
-.screen-container {
-  background: #2c3e50;
-  border-radius: 10px;
-  padding: 15px;
-  border: 3px solid #34495e;
-}
-
-.screen {
-  background: #95a5a6;
-  border-radius: 8px;
-  padding: 20px;
-  min-height: 300px;
-  border: 2px solid #7f8c8d;
-  position: relative;
-}
-
-.screen::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    45deg,
-    transparent 30%,
-    rgba(255, 255, 255, 0.1) 50%,
-    transparent 70%
-  );
-  pointer-events: none;
-}
-
-.screen-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
-}
-
-/* 포켓몬 이미지 */
-.pokemon-image-container {
-  width: 150px;
-  height: 150px;
-  background: #ecf0f1;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 3px solid #bdc3c7;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
-}
-
-#pokemon-image {
-  width: 58%;
-  object-fit: contain;
-}
-
-/* 포켓몬 정보 */
-.pokemon-info {
-  text-align: center;
-  color: #2c3e50;
-}
-
-.pokemon-number {
-  font-size: 12px;
-  color: #7f8c8d;
-  margin-bottom: 5px;
-}
-
-.pokemon-name {
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  color: #2c3e50;
-}
-
-.pokemon-types {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-}
-
-.type {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 10px;
-  font-weight: bold;
-  color: white;
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
-}
-
-/* 타입별 색상 */
-.type.normal {
-  background: #a8a878;
-}
-.type.fire {
-  background: #f08030;
-}
-.type.water {
-  background: #6890f0;
-}
-.type.electric {
-  background: #f8d030;
-}
-.type.grass {
-  background: #78c850;
-}
-.type.ice {
-  background: #98d8d8;
-}
-.type.fighting {
-  background: #c03028;
-}
-.type.poison {
-  background: #a040a0;
-}
-.type.ground {
-  background: #e0c068;
-}
-.type.flying {
-  background: #a890f0;
-}
-.type.psychic {
-  background: #f85888;
-}
-.type.bug {
-  background: #a8b820;
-}
-.type.rock {
-  background: #b8a038;
-}
-.type.ghost {
-  background: #705898;
-}
-.type.dragon {
-  background: #7038f8;
-}
-.type.dark {
-  background: #705848;
-}
-.type.steel {
-  background: #b8b8d0;
-}
-.type.fairy {
-  background: #ee99ac;
-}
-
-/* 컨트롤 패널 */
-.controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-}
-
-/* D패드 */
-.d-pad {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-}
-
-.d-pad-up,
-.d-pad-down {
-  width: 40px;
-  height: 30px;
-  background: #34495e;
-  border: 2px solid #2c3e50;
-  border-radius: 5px;
-  color: white;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.d-pad-middle {
-  display: flex;
-  gap: 5px;
-}
-
-.d-pad-left,
-.d-pad-right {
-  width: 30px;
-  height: 40px;
-  background: #34495e;
-  border: 2px solid #2c3e50;
-  border-radius: 5px;
-  color: white;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.d-pad-up:hover,
-.d-pad-down:hover,
-.d-pad-left:hover,
-.d-pad-right:hover {
-  background: #5d6d7e;
-  transform: scale(1.05);
-}
-
-/* 버튼 */
-.buttons {
-  display: flex;
-  gap: 10px;
-}
-
-.btn {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  border: 3px solid #2c3e50;
-  font-weight: bold;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s;
-  color: white;
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
-}
-
-.btn-a {
-  background: #e74c3c;
-}
-
-.btn-b {
-  background: #3498db;
-}
-
-.btn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-}
-
-/* 오른쪽 패널 */
-.right-panel {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-/* 통계 스크린 */
-.stats-screen {
-  background: #2c3e50;
-  border-radius: 10px;
-  padding: 15px;
-  border: 3px solid #34495e;
-  color: white;
-}
-
-.stats-header {
-  font-size: 12px;
-  text-align: center;
-  margin-bottom: 15px;
-  color: #ecf0f1;
-  border-bottom: 2px solid #34495e;
-  padding-bottom: 5px;
-}
-
-.stats-content {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.stat-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 10px;
-}
-
-.stat-label {
-  color: #bdc3c7;
-}
-
-.stat-value {
-  color: #ecf0f1;
-  font-weight: bold;
-}
-
-/* 검색 섹션 */
-.search-section {
-  background: #2c3e50;
-  border-radius: 10px;
-  padding: 15px;
-  border: 3px solid #34495e;
-}
-
-.search-header {
-  font-size: 12px;
-  text-align: center;
-  margin-bottom: 10px;
-  color: #ecf0f1;
-}
-
-.search-input-container {
-  display: flex;
-  gap: 8px;
-}
-
-#search-input {
-  flex: 1;
-  padding: 8px;
-  border: 2px solid #34495e;
-  border-radius: 5px;
-  background: #ecf0f1;
-  font-family: "Press Start 2P", cursive;
-  font-size: 10px;
-}
-
-#search-submit {
-  padding: 8px 12px;
-  background: #27ae60;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-family: "Press Start 2P", cursive;
-  font-size: 10px;
-  transition: background 0.2s;
-}
-
-#search-submit:hover {
-  background: #229954;
-}
-
-/* 포켓몬 목록 */
-.pokemon-list {
-  background: #2c3e50;
-  border-radius: 10px;
-  padding: 15px;
-  border: 3px solid #34495e;
-  flex: 1;
-  overflow: hidden;
-}
-
-.list-header {
-  font-size: 12px;
-  text-align: center;
-  margin-bottom: 10px;
-  color: #ecf0f1;
-  border-bottom: 2px solid #34495e;
-  padding-bottom: 5px;
-}
-
-.list-content {
-  max-height: 200px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.pokemon-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px;
-  background: #34495e;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background 0.2s;
-  font-size: 10px;
-  color: #ecf0f1;
-}
-
-.pokemon-item:hover {
-  background: #5d6d7e;
-}
-
-.pokemon-item.selected {
-  background: #e74c3c;
-}
-
-.pokemon-item-number {
-  color: #bdc3c7;
-  min-width: 30px;
-}
-
-.pokemon-item-name {
-  flex: 1;
-}
-
-.pokemon-item-types {
-  display: flex;
-  gap: 4px;
-}
-
-.pokemon-item-type {
-  padding: 2px 6px;
-  border-radius: 8px;
-  font-size: 8px;
-  color: white;
-}
-
-/* LED 표시등 */
-.led-indicators {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin-top: 20px;
-}
-
-.led {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 2px solid #2c3e50;
-  animation: blink 2s infinite;
-}
-
-.led-red {
-  background: #e74c3c;
-  animation-delay: 0s;
-}
-
-.led-yellow {
-  background: #f39c12;
-  animation-delay: 0.7s;
-}
-
-.led-green {
-  background: #27ae60;
-  animation-delay: 1.4s;
-}
-
-@keyframes blink {
-  0%,
-  50% {
-    opacity: 1;
-  }
-  51%,
-  100% {
-    opacity: 0.3;
-  }
-}
-
-/* 로딩 오버레이 */
-.loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.3s;
-}
-
-.loading-overlay.show {
-  opacity: 1;
-  visibility: visible;
-}
-
-.loading-text {
-  color: white;
-  font-size: 16px;
-  font-family: "Press Start 2P", cursive;
-}
-
-/* 스크롤바 스타일링 */
-.list-content::-webkit-scrollbar {
-  width: 8px;
-}
-
-.list-content::-webkit-scrollbar-track {
-  background: #34495e;
-  border-radius: 4px;
-}
-
-.list-content::-webkit-scrollbar-thumb {
-  background: #5d6d7e;
-  border-radius: 4px;
-}
-
-.list-content::-webkit-scrollbar-thumb:hover {
-  background: #7f8c8d;
 }
 
 /* 반응형 디자인 */
