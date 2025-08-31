@@ -18,6 +18,7 @@ class PokemonDex {
     this.pokemonWeight = document.getElementById("pokemon-weight");
     this.pokemonAbility = document.getElementById("pokemon-ability");
     this.pokemonExperience = document.getElementById("pokemon-experience");
+    this.pokemonListContainer = document.getElementById("pokemon-list");
 
     // 버튼 DOM 요소들
     this.prevBtn = document.getElementById("prev-pokemon");
@@ -40,6 +41,12 @@ class PokemonDex {
 
     // 로딩 스피너 요소 추가
     this.imageLoadingSpinner = document.getElementById("image-loading-spinner");
+
+    // 디바운스 관련 변수
+    this.searchDelay = 500; // 500ms 대기
+
+    // 검색 캐시
+    this.pokemonCache = new Map();
   }
 
   // 초기화 함수
@@ -48,6 +55,7 @@ class PokemonDex {
     this.setupEventListeners(); // 버튼 이벤트 설정
     this.setupImageLoadingEvent(); // 이미지 로딩 이벤트 설정
     this.loadPokemon(this.currentPokemonId); // 첫번째 포켓몬 로드
+    this.createPokemonList(1, 10); // 포켓몬 목록 생성
   }
 
   // 포켓몬 총 개수 가져오기
@@ -62,6 +70,29 @@ class PokemonDex {
       console.error("포켓몬 개수 가져오기 실패:", error);
       this.totalPokemon = 151; // 에러 시 기본값
     }
+  }
+
+  // 포켓몬 목록 생성
+  async createPokemonList(startId = 1, count = 10) {
+    console.log("포켓몬 목록 생성 시작");
+    this.pokemonListContainer.innerHTML = "";
+
+    for (let i = startId; i < startId + count && i <= this.totalPokemon; i++) {
+      try {
+        const response = await fetch(`${API_URL}/${i}`);
+        const data = await response.json();
+
+        // 포켓몬 아이템 생성 (내용 포함)
+        const pokemonItem = this.createPokemonListItem(data, i);
+        this.pokemonListContainer.appendChild(pokemonItem);
+
+        console.log(`포켓몬 ${i} 추가됨:`, data.name);
+      } catch (err) {
+        console.error(`포켓몬 ${i} 정보 가져오기 실패`, err);
+      }
+    }
+
+    console.log("포켓몬 목록 생성 완료");
   }
 
   // 이벤트 리스너 설정
@@ -115,6 +146,13 @@ class PokemonDex {
         this.searchPokemon();
       }
     });
+
+    // 실시간 검색 (Lodash 디바운스 적용)
+    const debouncedSearch = _.debounce(
+      this.performSearch.bind(this),
+      this.searchDelay
+    );
+    this.searchInput.addEventListener("input", debouncedSearch);
   }
 
   // 포켓몬 로드 함수 (아직 안 만듦)
@@ -202,18 +240,209 @@ class PokemonDex {
   }
 
   // ================== 검색 기능 ==================
+
+  // 실시간 검색 함수 (디바운스 적용)
+  async performSearch() {
+    const searchWord = this.searchInput.value.trim().toLowerCase();
+
+    // 검색어가 없으면 기본 목록 표시
+    if (!searchWord) {
+      this.resetToDefaultList();
+      return;
+    }
+
+    try {
+      console.log(`${searchWord} 검색 중...`);
+
+      // 숫자인지 확인
+      const searchId = parseInt(searchWord);
+      if (!isNaN(searchId) && searchId > 0 && searchId <= this.totalPokemon) {
+        // ID로 검색
+        await this.searchById(searchId);
+        return;
+      }
+
+      // 이름으로 검색 (부분 검색 지원)
+      await this.searchByName(searchWord);
+    } catch (error) {
+      console.error("검색 실패", error);
+      this.showSearchError();
+    }
+  }
+
+  // ID로 검색
+  async searchById(searchId) {
+    this.currentPokemonId = searchId;
+    await this.loadPokemon(searchId);
+
+    // 검색 결과를 목록에 표시
+    this.pokemonListContainer.innerHTML = "";
+    const response = await fetch(`${API_URL}/${searchId}`);
+    const data = await response.json();
+    const pokemonItem = this.createPokemonListItem(data, searchId);
+    this.pokemonListContainer.appendChild(pokemonItem);
+  }
+
+  // 이름으로 검색 (부분 검색 지원)
+  async searchByName(searchWord) {
+    try {
+      // 먼저 정확한 이름으로 시도
+      const response = await fetch(`${API_URL}/${searchWord.toLowerCase()}`);
+      const data = await response.json();
+
+      // 검색 결과를 목록에 표시
+      this.pokemonListContainer.innerHTML = "";
+      const pokemonItem = this.createPokemonListItem(data, data.id);
+      this.pokemonListContainer.appendChild(pokemonItem);
+
+      // 포켓몬 로드
+      this.currentPokemonId = data.id;
+      await this.loadPokemon(data.id);
+    } catch (error) {
+      // 정확한 이름이 없으면 부분 검색 시도
+      await this.searchByPartialName(searchWord);
+    }
+  }
+
+  // 부분 검색 (캐시 활용)
+  async searchByPartialName(searchWord) {
+    console.log(`부분 검색: ${searchWord}`);
+
+    // 검색 범위 설정 (처음 151마리에서 검색)
+    const searchRange = Math.min(151, this.totalPokemon);
+    const matchingPokemon = [];
+
+    // 검색 범위 내에서 매칭되는 포켓몬 찾기
+    for (let i = 1; i <= searchRange; i++) {
+      try {
+        // 캐시에서 먼저 확인
+        let data;
+        if (this.pokemonCache.has(i)) {
+          data = this.pokemonCache.get(i);
+        } else {
+          const response = await fetch(`${API_URL}/${i}`);
+          data = await response.json();
+          // 캐시에 저장
+          this.pokemonCache.set(i, data);
+        }
+
+        // 이름에 검색어가 포함되는지 확인
+        if (data.name.toLowerCase().includes(searchWord)) {
+          matchingPokemon.push({ data, id: i });
+
+          // 최대 10개까지만 찾기
+          if (matchingPokemon.length >= 10) {
+            break;
+          }
+        }
+      } catch (error) {
+        console.error(`포켓몬 ${i} 검색 실패:`, error);
+      }
+    }
+
+    // 검색 결과 표시
+    this.pokemonListContainer.innerHTML = "";
+
+    if (matchingPokemon.length > 0) {
+      matchingPokemon.forEach(({ data, id }) => {
+        const pokemonItem = this.createPokemonListItem(data, id);
+        this.pokemonListContainer.appendChild(pokemonItem);
+      });
+
+      // 첫 번째 결과를 선택
+      this.currentPokemonId = matchingPokemon[0].id;
+      await this.loadPokemon(matchingPokemon[0].id);
+
+      console.log(`${matchingPokemon.length}개의 포켓몬을 찾았습니다.`);
+    } else {
+      this.showSearchError();
+    }
+  }
+
+  // 기본 목록으로 복원
+  resetToDefaultList() {
+    this.createPokemonList(1, 10);
+  }
+
+  // 검색 에러 표시
+  showSearchError() {
+    this.pokemonListContainer.innerHTML = `
+      <div class="search-error">
+        <p>포켓몬을 찾을 수 없습니다.</p>
+        <p>다른 이름이나 번호를 입력해보세요.</p>
+      </div>
+    `;
+  }
+
+  // 포켓몬 아이템 생성 함수
+  createPokemonListItem(data, id) {
+    const item = document.createElement("div");
+    item.className = "pokemon-list-item";
+    item.dataset.pokemonId = id;
+
+    // 현재 선택된 포켓몬인지 확인
+    if (id === this.currentPokemonId) {
+      item.classList.add("active");
+    }
+
+    // 타입 정보 가져오기
+    const types = data.types
+      .map((type) => this.getKoreanTypeName(type.type.name))
+      .join(", ");
+
+    // 내용 추가
+    item.innerHTML = `
+      <div class="pokemon-list-item-content">
+        <img src="${data.sprites.front_default}" alt="${data.name}" 
+             onerror="this.src='./src/assets/images/pokeball.png'">
+        <div class="pokemon-list-item-info">
+          <div class="pokemon-list-item-name">#${String(id).padStart(3, "0")} ${
+      data.name
+    }</div>
+          <div class="pokemon-list-item-types">${types}</div>
+        </div>
+      </div>
+    `;
+
+    // 클릭 이벤트 추가
+    item.addEventListener("click", () => {
+      this.selectPokemonFromList(id);
+    });
+
+    return item;
+  }
+
+  // 목록에서 포켓몬 선택
+  selectPokemonFromList(id) {
+    // 이전 선택 해제
+    const activeItem = this.pokemonListContainer.querySelector(
+      ".pokemon-list-item.active"
+    );
+    if (activeItem) {
+      activeItem.classList.remove("active");
+    }
+
+    // 새 선택 표시
+    const newActiveItem = this.pokemonListContainer.querySelector(
+      `[data-pokemon-id="${id}"]`
+    );
+    if (newActiveItem) {
+      newActiveItem.classList.add("active");
+    }
+
+    // 포켓몬 로드
+    this.currentPokemonId = id;
+    this.loadPokemon(id);
+  }
+
+  // 기존 검색 함수 (버튼 클릭용)
   async searchPokemon() {
     const searchWord = this.searchInput.value.trim();
     if (!searchWord) {
       alert("검색어를 입력해주세요");
       return;
     }
-    try {
-      console.log(`${searchWord} 검색 중...`);
-    } catch (error) {
-      // 나중에 구현할 예정
-      console.error("검색 실패", error);
-    }
+    await this.performSearch();
   }
 
   // 4-1. 타입 정보 업데이트

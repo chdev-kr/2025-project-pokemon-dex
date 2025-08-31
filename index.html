@@ -98,7 +98,14 @@
           </div>
 
           <div class="pokemon-list">
-            <div class="list-header">포켓몬 목록</div>
+            <div class="list-header">
+              포켓몬 목록
+              <div class="list-controls">
+                <button id="prev-list-btn" class="list-btn">◀</button>
+                <span id="list-page-info">1-10</span>
+                <button id="next-list-btn" class="list-btn">▶</button>
+              </div>
+            </div>
             <div class="list-content" id="pokemon-list">
               <!-- 포켓몬 목록이 여기에 동적으로 추가됩니다 -->
             </div>
@@ -133,6 +140,7 @@
       <div class="loading-text">로딩 중...</div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

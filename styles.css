@@ -678,6 +678,69 @@ body {
   z-index: -1;
 }
 
+/* 포켓몬 목록 스타일 */
+.pokemon-list-item {
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pokemon-list-item:hover {
+  border-color: #007bff;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.pokemon-list-item.active {
+  border-color: #28a745;
+  background: #e8f5e8;
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+}
+
+.pokemon-list-item-content {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+}
+
+.pokemon-list-item img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  margin-right: 12px;
+}
+
+.pokemon-list-item-info {
+  flex: 1;
+}
+
+.pokemon-list-item-name {
+  font-weight: bold;
+  font-size: 12px;
+  margin-bottom: 2px;
+  color: #333;
+}
+
+.pokemon-list-item-types {
+  font-size: 10px;
+  color: #666;
+}
+
+/* 검색 에러 스타일 */
+.search-error {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.search-error p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .pokedex-body {

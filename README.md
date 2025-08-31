@@ -2,42 +2,16 @@
 
 레트로 게임보이 스타일의 포켓몬 도감 웹 애플리케이션입니다. PokeAPI를 활용하여 포켓몬 정보를 실시간으로 조회하고, 로딩 애니메이션과 배경음악 기능을 제공합니다.
 
-// 포켓몬 데이터 가져오기
-async function checkPokemonData() {
-try {
-const response = await fetch('https://pokeapi.co/api/v2/pokemon/1');
-const data = await response.json();
-
-    console.log('=== 포켓몬 데이터 구조 ===');
-    console.log('전체 데이터:', data);
-    console.log('사용 가능한 키들:', Object.keys(data));
-
-    // 주요 속성들 자세히 보기
-    console.log('=== 주요 속성들 ===');
-    console.log('ID:', data.id);
-    console.log('이름:', data.name);
-    console.log('키:', data.height);
-    console.log('몸무게:', data.weight);
-    console.log('타입:', data.types);
-    console.log('특성:', data.abilities);
-    console.log('스프라이트:', data.sprites);
-
-} catch (error) {
-console.error('데이터 가져오기 실패:', error);
-}
-}
-
-// 함수 실행
-checkPokemonData();
-
 ## 🌟 주요 기능
 
 ### 📱 핵심 기능
 
 - **포켓몬 정보 조회**: 1,000마리의 포켓몬 정보 실시간 조회
 - **네비게이션**: 이전/다음/랜덤 포켓몬 이동
-- **검색 기능**: ID 또는 이름으로 포켓몬 검색
+- **검색 기능**: ID, 정확한 이름, 부분 검색 지원
 - **타입 표시**: 포켓몬 타입을 한국어로 표시
+- **포켓몬 목록**: 클릭 가능한 포켓몬 카드 목록
+- **실시간 검색**: 디바운스 적용으로 성능 최적화
 
 ### 🎨 UI/UX 기능
 
@@ -222,9 +196,101 @@ const abilityName = mainAbility.ability.name; // 내부 ability.name을 꺼내�
 // types 배열에서 type.name을 꺼내서 getKoreanType에 매핑
 pokemonData.types.forEach((type) => {
   const typeName = type.type.name;
-  const koreanType = getKoreanTypeName(typeName);
+  const koreanType = this.getKoreanTypeName(typeName);
 });
 ```
+
+## 🔍 검색 기능 상세 설명
+
+### 검색 방식
+
+1. **ID 검색**: 숫자 입력 시 해당 번호의 포켓몬 검색
+2. **정확한 이름 검색**: 완전한 영어 이름 입력 시 즉시 검색
+3. **부분 검색**: 부분 이름 입력 시 151마리 중에서 필터링
+
+### 검색 예시
+
+```javascript
+// ID 검색
+"25" → 피카츄 (25번 포켓몬)
+
+// 정확한 이름 검색
+"bulbasaur" → 이상해씨
+"pikachu" → 피카츄
+
+// 부분 검색
+"bulba" → 이상해씨 (bulbasaur)
+"pika" → 피카츄 (pikachu)
+"char" → 파이리, 리자드, 리자몽 (charmander, charmeleon, charizard)
+```
+
+### 디바운스 적용
+
+```javascript
+// Lodash를 활용한 디바운스
+const debouncedSearch = _.debounce(this.performSearch.bind(this), 500);
+this.searchInput.addEventListener("input", debouncedSearch);
+```
+
+**장점:**
+
+- 타이핑 중 불필요한 API 호출 방지
+- 500ms 대기 후 검색 실행
+- 성능 최적화
+
+### 검색 성능 최적화
+
+```javascript
+// 캐시 시스템
+this.pokemonCache = new Map();
+
+// 검색 시 캐시 확인
+if (this.pokemonCache.has(id)) {
+  data = this.pokemonCache.get(id);
+} else {
+  const response = await fetch(`${API_URL}/${id}`);
+  data = await response.json();
+  this.pokemonCache.set(id, data);
+}
+```
+
+**최적화 요소:**
+
+- **검색 범위**: 처음 151마리만 검색 (빠른 응답)
+- **결과 제한**: 최대 10개까지만 표시
+- **캐시 활용**: 한 번 검색한 포켓몬은 메모리에 저장
+
+### 포켓몬 목록 기능
+
+```javascript
+// 포켓몬 카드 생성
+createPokemonListItem(data, id) {
+  const item = document.createElement("div");
+  item.className = "pokemon-list-item";
+
+  // 현재 선택된 포켓몬 하이라이트
+  if (id === this.currentPokemonId) {
+    item.classList.add("active");
+  }
+
+  // 클릭 이벤트 추가
+  item.addEventListener("click", () => {
+    this.selectPokemonFromList(id);
+  });
+
+  return item;
+}
+```
+
+**기능:**
+
+- 클릭 가능한 포켓몬 카드
+- 현재 선택된 포켓몬 하이라이트
+- 이미지, 이름, 타입 정보 표시
+  const koreanType = getKoreanTypeName(typeName);
+  });
+
+````
 
 ## 🎨 디자인 아이디어 및 참고사항
 
@@ -287,6 +353,39 @@ async function findMaxPokemonId() {
 }
 
 findMaxPokemonId();
+````
+
+## 📊 API 데이터 구조 확인 스크립트
+
+포켓몬 API에서 제공하는 데이터 구조를 확인하는 유틸리티 스크립트:
+
+```javascript
+// 포켓몬 데이터 가져오기
+async function checkPokemonData() {
+  try {
+    const response = await fetch("https://pokeapi.co/api/v2/pokemon/1");
+    const data = await response.json();
+
+    console.log("=== 포켓몬 데이터 구조 ===");
+    console.log("전체 데이터:", data);
+    console.log("사용 가능한 키들:", Object.keys(data));
+
+    // 주요 속성들 자세히 보기
+    console.log("=== 주요 속성들 ===");
+    console.log("ID:", data.id);
+    console.log("이름:", data.name);
+    console.log("키:", data.height);
+    console.log("몸무게:", data.weight);
+    console.log("타입:", data.types);
+    console.log("특성:", data.abilities);
+    console.log("스프라이트:", data.sprites);
+  } catch (error) {
+    console.error("데이터 가져오기 실패:", error);
+  }
+}
+
+// 함수 실행
+checkPokemonData();
 ```
 
 ## 🐛 트러블 슈팅
@@ -631,6 +730,34 @@ function() {
 ```
 
 ## 🎯 향후 개선 계획
+
+### 검색 기능 개선
+
+- [ ] **한국어 이름 검색**: "이상해씨", "피카츄" 등 한국어로 검색
+- [ ] **타입별 필터링**: 풀, 불꽃, 물 타입별 포켓몬 필터링
+- [ ] **정렬 기능**: 이름순, 번호순, 타입순 정렬
+- [ ] **즐겨찾기**: 좋아하는 포켓몬 저장 기능
+
+### UI/UX 개선
+
+- [ ] **페이지네이션**: 포켓몬 목록 페이지 단위로 보기
+- [ ] **무한스크롤**: 스크롤로 더 많은 포켓몬 로드
+- [ ] **다크모드**: 어두운 테마 지원
+- [ ] **애니메이션**: 더 부드러운 전환 효과
+
+### 기능 확장
+
+- [ ] **진화 체인**: 포켓몬 진화 정보 표시
+- [ ] **기술 목록**: 포켓몬이 배울 수 있는 기술들
+- [ ] **능력치 차트**: HP, 공격, 방어 등 능력치 시각화
+- [ ] **서식지 정보**: 포켓몬이 살 수 있는 장소 정보
+
+### 성능 최적화
+
+- [ ] **이미지 지연 로딩**: 화면에 보이는 이미지만 로드
+- [ ] **서비스 워커**: 오프라인 지원
+- [ ] **PWA**: 모바일 앱처럼 설치 가능
+- [ ] **데이터베이스**: 로컬 저장소 활용
 
 ### 기능 개선
 
