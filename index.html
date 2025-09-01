@@ -55,8 +55,8 @@
             </div>
 
             <div class="buttons">
-              <button class="btn btn-a" id="search-btn">A</button>
-              <button class="btn btn-b" id="random-btn">B</button>
+              <!-- <button class="btn btn-a" id="search-btn">A</button> -->
+              <button class="btn btn-b" id="random-btn">Random</button>
             </div>
           </div>
         </div>
@@ -120,6 +120,183 @@
         <div class="led led-green"></div>
       </div>
     </div>
+
+    <!-- 사용법 가이드 모달 -->
+    <div class="guide-modal" id="guide-modal">
+      <div class="guide-content">
+        <div class="guide-header">
+          <h2>📖 포켓몬 도감 사용법</h2>
+          <button class="guide-close" id="guide-close">&times;</button>
+        </div>
+
+        <div class="guide-tabs">
+          <button class="tab-btn active" data-tab="basic">기본 조작</button>
+          <button class="tab-btn" data-tab="search">검색 방법</button>
+          <button class="tab-btn" data-tab="tips">팁 & 트릭</button>
+        </div>
+
+        <div class="guide-body">
+          <!-- 기본 조작 탭 -->
+          <div class="tab-content active" id="basic-tab">
+            <div class="guide-section">
+              <h3>🎮 컨트롤 패널</h3>
+              <div class="control-guide">
+                <div class="control-item">
+                  <div class="control-icon">▲</div>
+                  <div class="control-desc">
+                    <strong>이전 포켓몬</strong><br />
+                    이전 번호의 포켓몬으로 이동
+                  </div>
+                </div>
+                <div class="control-item">
+                  <div class="control-icon">▼</div>
+                  <div class="control-desc">
+                    <strong>다음 포켓몬</strong><br />
+                    다음 번호의 포켓몬으로 이동
+                  </div>
+                </div>
+                <div class="control-item">
+                  <div class="control-icon">◀◀</div>
+                  <div class="control-desc">
+                    <strong>100개 이전</strong><br />
+                    100개 단위로 빠르게 이동
+                  </div>
+                </div>
+                <div class="control-item">
+                  <div class="control-icon">▶▶</div>
+                  <div class="control-desc">
+                    <strong>100개 다음</strong><br />
+                    100개 단위로 빠르게 이동
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="guide-section">
+              <h3>🔘 버튼 기능</h3>
+              <div class="button-guide">
+    
+                </div>
+                <div class="button-item">
+                  <button class="demo-btn btn-b">B</button>
+                  <div class="button-desc">
+                    <strong>랜덤 포켓몬</strong><br />
+                    무작위로 포켓몬 선택
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 검색 방법 탭 -->
+          <div class="tab-content" id="search-tab">
+            <div class="guide-section">
+              <h3>🔍 검색 방법</h3>
+              <div class="search-guide">
+                <div class="search-step">
+                  <div class="step-number">1</div>
+                  <div class="step-content">
+                    <strong>검색창 클릭</strong><br />
+                    오른쪽 패널의 검색창을 클릭하세요
+                  </div>
+                </div>
+                <div class="search-step">
+                  <div class="step-number">2</div>
+                  <div class="step-content">
+                    <strong>포켓몬 입력</strong><br />
+                    이름(영문) 또는 번호를 입력하세요
+                  </div>
+                </div>
+                <div class="search-step">
+                  <div class="step-number">3</div>
+                  <div class="step-content">
+                    <strong>검색 실행</strong><br />
+                    Enter 키를 누르거나 검색 버튼을 클릭하세요
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="guide-section">
+              <h3>💡 검색 팁</h3>
+              <ul class="search-tips">
+                <li>
+                  포켓몬 이름은
+                  <strong>영문</strong>으로 입력 가능
+                </li>
+                <li>번호는 <strong>1~1000</strong> 범위에서 검색 가능</li>
+                <li>실시간 검색으로 타이핑하면서 결과 확인 가능</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 팁 & 트릭 탭 -->
+          <div class="tab-content" id="tips-tab">
+            <div class="guide-section">
+              <h3>⭐ 유용한 팁</h3>
+              <div class="tips-grid">
+                <div class="tip-card">
+                  <div class="tip-icon">🎵</div>
+                  <h4>배경음악</h4>
+                  <p>
+                    우측 하단의 몬스터볼을 클릭하여 포켓몬 테마 음악을 재생할 수
+                    있습니다.
+                  </p>
+                </div>
+                <div class="tip-card">
+                  <div class="tip-icon">📱</div>
+                  <h4>반응형 디자인</h4>
+                  <p>모바일과 데스크톱 모두에서 최적화된 경험을 제공합니다.</p>
+                </div>
+                <div class="tip-card">
+                  <div class="tip-icon">⚡</div>
+                  <h4>빠른 이동</h4>
+                  <p>◀◀ ▶▶ 버튼으로 100개 단위 빠른 이동이 가능합니다.</p>
+                </div>
+                <div class="tip-card">
+                  <div class="tip-icon">🔄</div>
+                  <h4>자동 로딩</h4>
+                  <p>
+                    포켓몬 정보는 자동으로 로딩되며, 로딩 스피너로 진행 상황을
+                    확인할 수 있습니다.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="guide-section">
+              <h3>🎯 단축키</h3>
+              <div class="shortcut-list">
+                <div class="shortcut-item">
+                  <kbd>←</kbd> <span>이전 포켓몬</span>
+                </div>
+                <div class="shortcut-item">
+                  <kbd>→</kbd> <span>다음 포켓몬</span>
+                </div>
+                <div class="shortcut-item">
+                  <kbd>Ctrl + ←</kbd> <span>100개 이전</span>
+                </div>
+                <div class="shortcut-item">
+                  <kbd>Ctrl + →</kbd> <span>100개 다음</span>
+                </div>
+                <div class="shortcut-item">
+                  <kbd>R</kbd> <span>랜덤 포켓몬</span>
+                </div>
+                <div class="shortcut-item">
+                  <kbd>F</kbd> <span>검색창 포커스</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 사용법 가이드 열기 버튼 -->
+    <button class="guide-toggle" id="guide-toggle" title="사용법 보기">
+      <span class="guide-icon">❓</span>
+      <span class="guide-text">사용법</span>
+    </button>
 
     <!-- 플로팅 음악 버튼 -->
     <div class="floating-music-btn" id="music-btn">

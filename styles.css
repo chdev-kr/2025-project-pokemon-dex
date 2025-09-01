@@ -253,78 +253,119 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 8px;
+  padding: 10px;
 }
 
 .d-pad-up,
 .d-pad-down {
-  width: 40px;
-  height: 30px;
-  background: #34495e;
-  border: 2px solid #2c3e50;
-  border-radius: 5px;
+  width: 60px;
+  height: 45px;
+  background: linear-gradient(135deg, #34495e, #2c3e50);
+  border: 3px solid #2c3e50;
+  border-radius: 8px;
   color: white;
-  font-size: 12px;
+  font-size: 16px;
+  font-weight: bold;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .d-pad-middle {
   display: flex;
-  gap: 5px;
+  gap: 8px;
 }
 
 .d-pad-left,
 .d-pad-right {
-  width: 30px;
-  height: 40px;
-  background: #34495e;
-  border: 2px solid #2c3e50;
-  border-radius: 5px;
+  width: 45px;
+  height: 60px;
+  background: linear-gradient(135deg, #34495e, #2c3e50);
+  border: 3px solid #2c3e50;
+  border-radius: 8px;
   color: white;
-  font-size: 12px;
+  font-size: 16px;
+  font-weight: bold;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .d-pad-up:hover,
 .d-pad-down:hover,
 .d-pad-left:hover,
 .d-pad-right:hover {
-  background: #5d6d7e;
-  transform: scale(1.05);
+  background: linear-gradient(135deg, #5d6d7e, #34495e);
+  transform: scale(1.08);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+  border-color: #ecf0f1;
+}
+
+.d-pad-up:active,
+.d-pad-down:active,
+.d-pad-left:active,
+.d-pad-right:active {
+  transform: scale(0.95);
+  transition: transform 0.1s ease;
 }
 
 /* 버튼 */
 .buttons {
   display: flex;
-  gap: 10px;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 5px 0;
 }
 
 .btn {
-  width: 50px;
+  min-width: 50px;
   height: 50px;
   border-radius: 50%;
   border: 3px solid #2c3e50;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 12px;
   cursor: pointer;
   transition: all 0.2s;
   color: white;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
-.btn-a {
-  background: #e74c3c;
-}
+/* .btn-a {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
+} */
 
 .btn-b {
-  background: #3498db;
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.4);
 }
 
 .btn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  border-color: #ecf0f1;
+}
+
+.btn:active {
+  transform: scale(0.98);
+  transition: transform 0.1s ease;
 }
 
 /* 오른쪽 패널 */
@@ -767,5 +808,425 @@ body {
   #pokemon-image {
     width: 100px;
     height: 100px;
+  }
+}
+
+/* 사용법 가이드 모달 */
+.guide-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.guide-modal.active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.guide-content {
+  background: linear-gradient(135deg, #2c3e50, #34495e);
+  border-radius: 20px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  border: 2px solid #3498db;
+  position: relative;
+}
+
+.guide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 30px;
+  border-bottom: 2px solid #3498db;
+  background: linear-gradient(90deg, #2980b9, #3498db);
+  border-radius: 18px 18px 0 0;
+}
+
+.guide-header h2 {
+  color: white;
+  margin: 0;
+  font-size: 1.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.guide-close {
+  background: #e74c3c;
+  border: none;
+  color: white;
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.guide-close:hover {
+  background: #c0392b;
+  transform: scale(1.1);
+}
+
+/* 탭 버튼 */
+.guide-tabs {
+  display: flex;
+  background: #34495e;
+  border-bottom: 2px solid #3498db;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 15px 20px;
+  background: transparent;
+  border: none;
+  color: #bdc3c7;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.tab-btn:hover {
+  background: #2c3e50;
+  color: #ecf0f1;
+}
+
+.tab-btn.active {
+  background: #3498db;
+  color: white;
+  box-shadow: inset 0 -3px 0 #2980b9;
+}
+
+/* 탭 내용 */
+.guide-body {
+  padding: 30px;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+  animation: slideIn 0.3s ease;
+}
+
+.guide-section {
+  margin-bottom: 30px;
+}
+
+.guide-section h3 {
+  color: #3498db;
+  margin-bottom: 20px;
+  font-size: 1.3rem;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+/* 컨트롤 가이드 */
+.control-guide {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.control-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: rgba(52, 152, 219, 0.1);
+  border-radius: 10px;
+  border: 1px solid rgba(52, 152, 219, 0.3);
+  transition: all 0.3s ease;
+}
+
+.control-item:hover {
+  background: rgba(52, 152, 219, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+}
+
+.control-icon {
+  background: #3498db;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.control-desc {
+  color: #ecf0f1;
+  line-height: 1.4;
+}
+
+/* 버튼 가이드 */
+.button-guide {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.button-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: rgba(52, 152, 219, 0.1);
+  border-radius: 10px;
+  border: 1px solid rgba(52, 152, 219, 0.3);
+}
+
+.demo-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  font-weight: bold;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.demo-btn.btn-a {
+  background: #e74c3c;
+  color: white;
+}
+
+.demo-btn.btn-b {
+  background: #3498db;
+  color: white;
+}
+
+.demo-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* 검색 가이드 */
+.search-guide {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.search-step {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  background: rgba(46, 204, 113, 0.1);
+  border-radius: 10px;
+  border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+.step-number {
+  background: #2ecc71;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.step-content {
+  color: #ecf0f1;
+  line-height: 1.4;
+}
+
+.search-tips {
+  color: #ecf0f1;
+  line-height: 1.6;
+  padding-left: 20px;
+}
+
+.search-tips li {
+  margin-bottom: 10px;
+}
+
+/* 팁 카드 */
+.tips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.tip-card {
+  background: rgba(155, 89, 182, 0.1);
+  border: 1px solid rgba(155, 89, 182, 0.3);
+  border-radius: 15px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.tip-card:hover {
+  background: rgba(155, 89, 182, 0.2);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(155, 89, 182, 0.3);
+}
+
+.tip-icon {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+}
+
+.tip-card h4 {
+  color: #9b59b6;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+.tip-card p {
+  color: #ecf0f1;
+  line-height: 1.5;
+  font-size: 0.9rem;
+}
+
+/* 단축키 */
+.shortcut-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.shortcut-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: rgba(241, 196, 15, 0.1);
+  border-radius: 10px;
+  border: 1px solid rgba(241, 196, 15, 0.3);
+}
+
+kbd {
+  background: #f39c12;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-family: monospace;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.shortcut-item span {
+  color: #ecf0f1;
+  font-weight: 500;
+}
+
+/* 가이드 푸터 */
+.guide-footer {
+  padding: 20px 30px;
+  border-top: 2px solid #3498db;
+  text-align: center;
+}
+
+/* 가이드 토글 버튼 */
+.guide-toggle {
+  position: fixed;
+  bottom: 100px;
+  right: 30px;
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 15px 20px;
+  cursor: pointer;
+  box-shadow: 0 5px 20px rgba(52, 152, 219, 0.4);
+  transition: all 0.3s ease;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+}
+
+.guide-toggle:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(52, 152, 219, 0.6);
+}
+
+.guide-icon {
+  font-size: 1.2rem;
+}
+
+.guide-text {
+  font-size: 0.9rem;
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .guide-content {
+    width: 95%;
+    margin: 20px;
+  }
+
+  .guide-header {
+    padding: 15px 20px;
+  }
+
+  .guide-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .guide-body {
+    padding: 20px;
+  }
+
+  .control-guide,
+  .button-guide,
+  .tips-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .guide-toggle {
+    bottom: 80px;
+    right: 20px;
+    padding: 12px 16px;
+  }
+
+  .guide-text {
+    display: none;
   }
 }

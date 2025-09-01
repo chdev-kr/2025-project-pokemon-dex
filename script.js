@@ -153,6 +153,62 @@ class PokemonDex {
       this.searchDelay
     );
     this.searchInput.addEventListener("input", debouncedSearch);
+
+    // 사용법 가이드 관련 이벤트 리스너
+    this.setupGuideEvents();
+  }
+
+  // 사용법 가이드 이벤트 설정
+  setupGuideEvents() {
+    const guideToggle = document.getElementById("guide-toggle");
+    const guideModal = document.getElementById("guide-modal");
+    const guideClose = document.getElementById("guide-close");
+    const guideHelpful = document.getElementById("guide-helpful");
+    const tabBtns = document.querySelectorAll(".tab-btn");
+    const tabContents = document.querySelectorAll(".tab-content");
+
+    // 가이드 모달 열기
+    guideToggle.addEventListener("click", () => {
+      guideModal.classList.add("active");
+      document.body.style.overflow = "hidden"; // 스크롤 방지
+    });
+
+    // 가이드 모달 닫기
+    guideClose.addEventListener("click", () => {
+      guideModal.classList.remove("active");
+      document.body.style.overflow = ""; // 스크롤 복원
+    });
+
+    // 모달 외부 클릭 시 닫기
+    guideModal.addEventListener("click", (e) => {
+      if (e.target === guideModal) {
+        guideModal.classList.remove("active");
+        document.body.style.overflow = "";
+      }
+    });
+
+    // ESC 키로 모달 닫기
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && guideModal.classList.contains("active")) {
+        guideModal.classList.remove("active");
+        document.body.style.overflow = "";
+      }
+    });
+
+    // 탭 전환(사용법 모달 - 메뉴)
+    tabBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const targetTab = btn.getAttribute("data-tab");
+
+        // 모든 탭 비활성화
+        tabBtns.forEach((b) => b.classList.remove("active"));
+        tabContents.forEach((c) => c.classList.remove("active"));
+
+        // 선택된 탭 활성화
+        btn.classList.add("active");
+        document.getElementById(`${targetTab}-tab`).classList.add("active");
+      });
+    });
   }
 
   // 포켓몬 로드 함수 (아직 안 만듦)
