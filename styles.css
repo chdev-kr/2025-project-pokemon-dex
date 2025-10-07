@@ -1295,3 +1295,17 @@ kbd {
     opacity: 1;
   }
 }
+
+/* 비활성화된 목록 버튼 스타일 */
+.list-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  background: #7f8c8d;
+  color: #bdc3c7;
+}
+
+.list-btn:disabled:hover {
+  background: #7f8c8d;
+  transform: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}

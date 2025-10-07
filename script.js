@@ -30,6 +30,11 @@ class PokemonDex {
     this.searchInput = document.getElementById("search-input");
     this.searchSubmit = document.getElementById("search-submit");
 
+    // 포켓몬 목록 네비게이션 버튼들
+    this.prevListBtn = document.getElementById("prev-list-btn");
+    this.nextListBtn = document.getElementById("next-list-btn");
+    this.listPageInfo = document.getElementById("list-page-info");
+
     // 음악 관련 DOM 요소들
     this.video = document.getElementById("background-music");
     this.musicBtn = document.getElementById("music-btn");
@@ -48,6 +53,10 @@ class PokemonDex {
     // 검색 캐시 (포켓몬 데이터와 한국어 이름 저장)
     this.pokemonCache = new Map();
     this.koreanNameCache = new Map();
+
+    // 포켓몬 목록 페이지 관리
+    this.currentListPage = 1;
+    this.itemsPerPage = 10;
   }
 
   // 초기화 함수
@@ -57,6 +66,7 @@ class PokemonDex {
     this.setupImageLoadingEvent(); // 이미지 로딩 이벤트 설정
     this.loadPokemon(this.currentPokemonId); // 첫번째 포켓몬 로드
     this.createPokemonList(1, 10); // 포켓몬 목록 생성
+    this.updateListPageInfo(); // 목록 페이지 정보 초기화
   }
 
   // 포켓몬 총 개수 가져오기
@@ -157,6 +167,15 @@ class PokemonDex {
       this.searchDelay
     );
     this.searchInput.addEventListener("input", debouncedSearch);
+
+    // 포켓몬 목록 네비게이션 버튼
+    this.prevListBtn.addEventListener("click", () => {
+      this.goToPreviousListPage();
+    });
+
+    this.nextListBtn.addEventListener("click", () => {
+      this.goToNextListPage();
+    });
 
     // 사용법 가이드 관련 이벤트 리스너
     this.setupGuideEvents();
@@ -541,7 +560,44 @@ class PokemonDex {
 
   // 기본 목록으로 복원
   resetToDefaultList() {
+    this.currentListPage = 1;
     this.createPokemonList(1, 10);
+    this.updateListPageInfo();
+  }
+
+  // 이전 목록 페이지로 이동
+  goToPreviousListPage() {
+    if (this.currentListPage > 1) {
+      this.currentListPage--;
+      const startId = (this.currentListPage - 1) * this.itemsPerPage + 1;
+      this.createPokemonList(startId, this.itemsPerPage);
+      this.updateListPageInfo();
+      console.log(`목록 페이지 ${this.currentListPage}로 이동`);
+    }
+  }
+
+  // 다음 목록 페이지로 이동
+  goToNextListPage() {
+    const maxPage = Math.ceil(this.totalPokemon / this.itemsPerPage);
+    if (this.currentListPage < maxPage) {
+      this.currentListPage++;
+      const startId = (this.currentListPage - 1) * this.itemsPerPage + 1;
+      this.createPokemonList(startId, this.itemsPerPage);
+      this.updateListPageInfo();
+      console.log(`목록 페이지 ${this.currentListPage}로 이동`);
+    }
+  }
+
+  // 목록 페이지 정보 업데이트
+  updateListPageInfo() {
+    const startId = (this.currentListPage - 1) * this.itemsPerPage + 1;
+    const endId = Math.min(startId + this.itemsPerPage - 1, this.totalPokemon);
+    this.listPageInfo.textContent = `${startId}-${endId}`;
+
+    // 버튼 활성화/비활성화
+    this.prevListBtn.disabled = this.currentListPage === 1;
+    this.nextListBtn.disabled =
+      this.currentListPage >= Math.ceil(this.totalPokemon / this.itemsPerPage);
   }
 
   // 검색 스피너 표시
