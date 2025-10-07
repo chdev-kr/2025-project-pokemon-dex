@@ -654,13 +654,14 @@ body {
   height: 35px;
   object-fit: contain;
   transition: all 0.3s ease;
+  display: none;
 }
 
 .floating-music-btn .music-icon-text {
   font-size: 24px;
   color: white;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-  display: none;
+  display: block;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -669,21 +670,21 @@ body {
 
 /* 재생 중일 때: 포켓볼 GIF 표시 */
 .floating-music-btn.playing img {
+  display: block !important;
   animation: spin 2s linear infinite;
-  display: block;
 }
 
 .floating-music-btn.playing .music-icon-text {
-  display: none;
+  display: none !important;
 }
 
 /* 정지 중일 때: 텍스트 아이콘 표시 */
 .floating-music-btn:not(.playing) img {
-  display: none;
+  display: none !important;
 }
 
 .floating-music-btn:not(.playing) .music-icon-text {
-  display: block;
+  display: block !important;
 }
 
 @keyframes spin {

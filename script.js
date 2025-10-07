@@ -960,7 +960,8 @@ class PokemonDex {
 
         this.isMusicPlaying = true;
         this.musicBtn.classList.add("playing");
-        // CSS에서 자동으로 포켓볼 GIF 표시됨
+        console.log("🎵 음악 재생 상태로 변경 - 포켓볼 GIF 표시됨");
+        console.log("버튼 클래스:", this.musicBtn.className);
       })
       .catch((error) => {
         console.error("음악 재생 실패:", error);
@@ -975,9 +976,8 @@ class PokemonDex {
     this.video.muted = true; // 음소거 처리
     this.isMusicPlaying = false;
     this.musicBtn.classList.remove("playing");
-    // CSS에서 자동으로 ⏸️ 아이콘 표시됨
-
-    console.log("음악 정지");
+    console.log("⏸️ 음악 정지 상태로 변경 - 텍스트 아이콘 표시됨");
+    console.log("버튼 클래스:", this.musicBtn.className);
   }
 
   // ================== 이미지 로딩 기능 ==================
