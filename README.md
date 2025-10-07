@@ -1,42 +1,56 @@
 # 🎮 포켓몬 도감 (Pokemon Pokedex)
 
-레트로 게임보이 스타일의 포켓몬 도감 웹 애플리케이션입니다. PokeAPI를 활용하여 포켓몬 정보를 실시간으로 조회하고, 로딩 애니메이션과 배경음악 기능을 제공합니다.
+레트로 게임보이 스타일의 포켓몬 도감 웹 애플리케이션입니다. PokeAPI를 활용하여 포켓몬 정보를 실시간으로 조회하고, 한국어 검색, 로딩 애니메이션, 배경음악 기능을 제공합니다.
+
+🌐 **라이브 데모**: [https://chdev-kr.github.io/2025-project-pokemon-dex/](https://chdev-kr.github.io/2025-project-pokemon-dex/)
 
 ## 🌟 주요 기능
 
 ### 📱 핵심 기능
 
 - **포켓몬 정보 조회**: 1,000마리의 포켓몬 정보 실시간 조회
-- **네비게이션**: 이전/다음/랜덤 포켓몬 이동
-- **검색 기능**: ID, 정확한 이름, 부분 검색 지원
-- **타입 표시**: 포켓몬 타입을 한국어로 표시
-- **포켓몬 목록**: 클릭 가능한 포켓몬 카드 목록
-- **실시간 검색**: 디바운스 적용으로 성능 최적화
+- **한국어 지원**: 포켓몬 이름, 타입, 특성을 한국어로 표시
+- **네비게이션**: 이전/다음/100개 단위 이동/랜덤 포켓몬 이동
+- **고급 검색 기능**:
+  - ID 검색 (예: "1", "25")
+  - 영어 이름 검색 (예: "bulbasaur", "pikachu")
+  - 한국어 이름 검색 (예: "이상해씨", "피카츄")
+  - 부분 검색 (예: "이상", "피카")
+- **포켓몬 목록**: 페이지네이션이 적용된 클릭 가능한 포켓몬 카드 목록
+- **실시간 검색**: 디바운스 적용으로 성능 최적화 (300ms)
+- **검색 스피너**: 검색 중 로딩 애니메이션 표시
 
 ### 🎨 UI/UX 기능
 
 - **레트로 디자인**: 게임보이 스타일의 복고풍 인터페이스
+- **통일된 폰트**: Press Start 2P 픽셀 폰트로 일관성 있는 디자인
 - **로딩 애니메이션**: 이미지 로딩 중 스피너 표시
+- **검색 스피너**: 3개 점 바운스 애니메이션으로 검색 진행 상황 표시
 - **반응형 디자인**: 다양한 화면 크기에 대응
+- **사용법 가이드**: 인터랙티브 모달로 사용법 안내
+- **키보드 단축키**: 화살표 키, Ctrl+화살표, R(랜덤), F(검색) 지원
 
 ### 🎵 멀티미디어 기능
 
 - **배경음악**: 플로팅 버튼으로 포켓몬 테마곡 재생/일시정지
-- **GIF 이미지**: 고화질 포켓몬 GIF 이미지 표시 || GIF 이미지가 없을 경우 일반 이미지 표시
-- **아이콘 변경**: 재생/일시정지 상태에 따른 아이콘 변경
+- **동적 아이콘**: 재생 시 회전하는 포켓볼 GIF, 정지 시 일시정지 아이콘
+- **GIF 이미지**: 고화질 포켓몬 GIF 이미지 표시 (폴백: 일반 이미지)
+- **브라우저 호환**: 모든 주요 브라우저의 자동재생 정책 준수
 
 ## 🛠️ 기술 스택
 
 ### Frontend
 
-- **HTML5**: 시맨틱 마크업
-- **CSS3**: Flexbox, Grid, 애니메이션, 반응형 디자인
-- **JavaScript (ES6+)**: 클래스, 비동기 프로그래밍, DOM 조작
+- **HTML5**: 시맨틱 마크업, 접근성 고려
+- **CSS3**: Flexbox, Grid, 키프레임 애니메이션, 반응형 디자인
+- **JavaScript (ES6+)**: 클래스, 비동기 프로그래밍, DOM 조작, 캐시 시스템
+- **Google Fonts**: Press Start 2P 픽셀 폰트
 
 ### API & 외부 서비스
 
-- **PokeAPI**: 포켓몬 데이터 제공
+- **PokeAPI**: 포켓몬 기본 정보 및 Species API로 한국어 이름 제공
 - **Project Pokemon**: 고화질 GIF 이미지
+- **Lodash**: 디바운스 함수로 검색 성능 최적화
 - **YouTube**: 배경음악 소스
 
 ### 개발 도구
@@ -49,12 +63,16 @@
 ```
 2025-pokemon-dex/
 ├── index.html          # 메인 HTML 파일
-├── styles.css          # 스타일시트
-├── script.js           # JavaScript 로직
+├── styles.css          # 스타일시트 (1300+ 줄)
+├── script.js           # JavaScript 로직 (1000+ 줄)
+├── korean.js           # 한국어 이름 테스트 파일
 ├── src/
-│   ├── img/
+│   ├── images/
 │   │   └── pokeball.gif    # 음악 버튼 아이콘
-│   └── pokemon-theme-audio.mp4  # 배경음악
+│   ├── audio/
+│   │   └── pokemon-theme-audio.mp4  # 배경음악
+│   └── 404-error.png   # 에러 이미지
+├── favicon.ico         # 파비콘
 └── README.md           # 프로젝트 문서
 ```
 
@@ -90,17 +108,25 @@ http://localhost:8000
 ### 클래스 기반 구조
 
 ```javascript
-class Pokedex {
+class PokemonDex {
   constructor() {
-    // 초기화
+    // DOM 요소 참조
+    // 캐시 시스템 초기화
+    // 페이지네이션 설정
   }
 
   async loadPokemon(id) {
     // 포켓몬 데이터 로드
+    // 한국어 이름 가져오기
   }
 
-  updatePokemonDisplay(data) {
-    // 화면 업데이트
+  async getKoreanPokemonName(pokemonData) {
+    // Species API로 한국어 이름 조회
+    // 캐시 활용으로 성능 최적화
+  }
+
+  updatePokemonDisplay(data, koreanName) {
+    // 화면 업데이트 (한국어 이름 포함)
   }
 }
 ```
@@ -119,17 +145,98 @@ async loadPokemon(id) {
 }
 ```
 
-### 이미지 로딩 관리
+### 한국어 이름 지원
 
 ```javascript
-showImageLoading() {
-  this.imageLoadingSpinner.classList.remove("hidden");
-  this.pokemonImage.classList.remove("loaded");
+// Species API로 한국어 이름 가져오기
+async getKoreanPokemonName(pokemonData) {
+  // 캐시에서 먼저 확인
+  if (this.koreanNameCache.has(pokemonData.id)) {
+    return this.koreanNameCache.get(pokemonData.id);
+  }
+
+  try {
+    const speciesRes = await fetch(pokemonData.species.url);
+    const speciesData = await speciesRes.json();
+
+    const koreanNameObj = speciesData.names.find(n => n.language.name === "ko");
+    const result = koreanNameObj ? koreanNameObj.name : pokemonData.name;
+
+    // 캐시에 저장
+    this.koreanNameCache.set(pokemonData.id, result);
+    return result;
+  } catch (error) {
+    return pokemonData.name;
+  }
+}
+```
+
+### 검색 성능 최적화
+
+```javascript
+// 병렬 처리로 검색 속도 향상
+async searchByPartialName(searchWord) {
+  const batchSize = 10;
+  const searchRange = Math.min(50, this.totalPokemon);
+
+  for (let batchStart = 1; batchStart <= searchRange; batchStart += batchSize) {
+    const batchPromises = [];
+
+    // 배치 단위로 병렬 처리
+    for (let i = batchStart; i < batchStart + batchSize; i++) {
+      batchPromises.push(this.searchSinglePokemon(i, searchWord));
+    }
+
+    const batchResults = await Promise.all(batchPromises);
+    // 결과 처리 및 조기 종료
+  }
+}
+```
+
+### 검색 스피너 관리
+
+```javascript
+showSearchSpinner() {
+  this.pokemonListContainer.innerHTML = `
+    <div class="search-spinner">
+      <div class="spinner">
+        <div></div><div></div><div></div>
+      </div>
+      <p>검색 중...</p>
+    </div>
+  `;
 }
 
-hideImageLoading() {
-  this.imageLoadingSpinner.classList.add("hidden");
-  this.pokemonImage.classList.add("loaded");
+hideSearchSpinner() {
+  const spinner = this.pokemonListContainer.querySelector(".search-spinner");
+  if (spinner) {
+    this.pokemonListContainer.innerHTML = "";
+  }
+}
+```
+
+### 목록 페이지네이션
+
+```javascript
+// 목록 페이지 관리
+goToNextListPage() {
+  const maxPage = Math.ceil(this.totalPokemon / this.itemsPerPage);
+  if (this.currentListPage < maxPage) {
+    this.currentListPage++;
+    const startId = (this.currentListPage - 1) * this.itemsPerPage + 1;
+    this.createPokemonList(startId, this.itemsPerPage);
+    this.updateListPageInfo();
+  }
+}
+
+updateListPageInfo() {
+  const startId = (this.currentListPage - 1) * this.itemsPerPage + 1;
+  const endId = Math.min(startId + this.itemsPerPage - 1, this.totalPokemon);
+  this.listPageInfo.textContent = `${startId}-${endId}`;
+
+  // 버튼 상태 관리
+  this.prevListBtn.disabled = this.currentListPage === 1;
+  this.nextListBtn.disabled = this.currentListPage >= Math.ceil(this.totalPokemon / this.itemsPerPage);
 }
 ```
 
@@ -206,36 +313,43 @@ pokemonData.types.forEach((type) => {
 
 1. **ID 검색**: 숫자 입력 시 해당 번호의 포켓몬 검색
 2. **정확한 이름 검색**: 완전한 영어 이름 입력 시 즉시 검색
-3. **부분 검색**: 부분 이름 입력 시 151마리 중에서 필터링
+3. **한국어 검색**: 한국어 이름으로 검색 (정확한 이름 및 부분 검색)
+4. **부분 검색**: 부분 이름 입력 시 50마리 중에서 병렬 검색
 
 ### 검색 예시
 
 ```javascript
 // ID 검색
 "25" → 피카츄 (25번 포켓몬)
+"1" → 이상해씨 (1번 포켓몬)
 
-// 정확한 이름 검색
+// 영어 이름 검색
 "bulbasaur" → 이상해씨
 "pikachu" → 피카츄
 
-// 부분 검색
+// 한국어 이름 검색 (NEW!)
+"이상해씨" → 이상해씨 (bulbasaur)
+"피카츄" → 피카츄 (pikachu)
+
+// 부분 검색 (영어/한국어 모두 지원)
 "bulba" → 이상해씨 (bulbasaur)
-"pika" → 피카츄 (pikachu)
-"char" → 파이리, 리자드, 리자몽 (charmander, charmeleon, charizard)
+"이상" → 이상해씨, 이상해풀, 이상해꽃
+"피카" → 피카츄 (pikachu)
+"이" → "이"가 포함된 모든 포켓몬
 ```
 
 ### 디바운스 적용
 
 ```javascript
-// Lodash를 활용한 디바운스
-const debouncedSearch = _.debounce(this.performSearch.bind(this), 500);
+// Lodash를 활용한 디바운스 (300ms로 단축)
+const debouncedSearch = _.debounce(this.performSearch.bind(this), 300);
 this.searchInput.addEventListener("input", debouncedSearch);
 ```
 
 **장점:**
 
 - 타이핑 중 불필요한 API 호출 방지
-- 500ms 대기 후 검색 실행
+- 300ms 대기 후 검색 실행 (빠른 반응성)
 - 성능 최적화
 
 ### 검색 성능 최적화
@@ -256,9 +370,11 @@ if (this.pokemonCache.has(id)) {
 
 **최적화 요소:**
 
-- **검색 범위**: 처음 151마리만 검색 (빠른 응답)
-- **결과 제한**: 최대 10개까지만 표시
-- **캐시 활용**: 한 번 검색한 포켓몬은 메모리에 저장
+- **검색 범위**: 처음 50마리만 검색 (빠른 응답)
+- **병렬 처리**: 10개씩 배치 단위로 동시 검색
+- **결과 제한**: 최대 5개까지만 표시 (조기 종료)
+- **이중 캐시**: 포켓몬 데이터 + 한국어 이름 별도 캐시
+- **성능 모니터링**: 검색 시간 측정 및 로그 출력
 
 ### 포켓몬 목록 기능
 
@@ -729,54 +845,6 @@ function() {
 }.bind(this)
 ```
 
-## 🎯 향후 개선 계획
-
-### 검색 기능 개선
-
-- [ ] **한국어 이름 검색**: "이상해씨", "피카츄" 등 한국어로 검색
-- [ ] **타입별 필터링**: 풀, 불꽃, 물 타입별 포켓몬 필터링
-- [ ] **정렬 기능**: 이름순, 번호순, 타입순 정렬
-- [ ] **즐겨찾기**: 좋아하는 포켓몬 저장 기능
-
-### UI/UX 개선
-
-- [ ] **페이지네이션**: 포켓몬 목록 페이지 단위로 보기
-- [ ] **무한스크롤**: 스크롤로 더 많은 포켓몬 로드
-- [ ] **다크모드**: 어두운 테마 지원
-- [ ] **애니메이션**: 더 부드러운 전환 효과
-
-### 기능 확장
-
-- [ ] **진화 체인**: 포켓몬 진화 정보 표시
-- [ ] **기술 목록**: 포켓몬이 배울 수 있는 기술들
-- [ ] **능력치 차트**: HP, 공격, 방어 등 능력치 시각화
-- [ ] **서식지 정보**: 포켓몬이 살 수 있는 장소 정보
-
-### 성능 최적화
-
-- [ ] **이미지 지연 로딩**: 화면에 보이는 이미지만 로드
-- [ ] **서비스 워커**: 오프라인 지원
-- [ ] **PWA**: 모바일 앱처럼 설치 가능
-- [ ] **데이터베이스**: 로컬 저장소 활용
-
-### 기능 개선
-
-- [ ] 포켓몬 상세 정보 (키, 몸무게, 능력치)
-- [ ] 진화 정보 표시
-- [ ] 즐겨찾기 기능
-- [ ] 다크모드 지원
-
-### 성능 최적화
-
-- [ ] 이미지 캐싱 구현
-- [ ] API 응답 캐싱
-- [ ] 코드 분할 (Code Splitting)
-
-### 사용자 경험
-
-- [ ] 키보드 단축키 지원
-- [ ] 터치 제스처 지원
-- [ ] 오프라인 모드
 
 ## 📄 라이선스
 
@@ -791,6 +859,6 @@ function() {
 ---
 
 **개발자**: chDEV, 김채현
-**최종 업데이트**: 2025년 8월
+**최종 업데이트**: 2025년 10월
 
 설명하는 내용 하단 삽입

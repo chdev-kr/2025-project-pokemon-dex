@@ -76,7 +76,6 @@ class PokemonDex {
       const res = await fetch(`${API_URL}?limit=1`);
       const data = await res.json();
       this.totalPokemon = data.count;
-      console.log(`총 포켓몬 개수: ${this.totalPokemon}`);
     } catch (error) {
       console.error("포켓몬 개수 가져오기 실패:", error);
       this.totalPokemon = 151; // 에러 시 기본값
@@ -85,7 +84,6 @@ class PokemonDex {
 
   // 포켓몬 목록 생성 (한국어 이름 지원)
   async createPokemonList(startId = 1, count = 10) {
-    console.log("포켓몬 목록 생성 시작");
     this.pokemonListContainer.innerHTML = "";
 
     for (let i = startId; i < startId + count && i <= this.totalPokemon; i++) {
@@ -100,13 +98,11 @@ class PokemonDex {
         const pokemonItem = this.createPokemonListItem(data, i, koreanName);
         this.pokemonListContainer.appendChild(pokemonItem);
 
-        console.log(`포켓몬 ${i} 추가됨:`, koreanName || data.name);
       } catch (err) {
         console.error(`포켓몬 ${i} 정보 가져오기 실패`, err);
       }
     }
 
-    console.log("포켓몬 목록 생성 완료");
   }
 
   // 버튼 이벤트 리스너 설정
@@ -202,7 +198,6 @@ class PokemonDex {
 
     // 모달 외부 클릭 시 닫기
     guideModal.addEventListener("click", (e) => {
-      console.log("실제로 클릭된 e.target", e.target);
       if (e.target === guideModal) {
         guideModal.classList.remove("active");
       }
@@ -220,7 +215,6 @@ class PokemonDex {
     tabBtns.forEach((btn) => {
       btn.addEventListener("click", () => {
         const targetTab = btn.getAttribute("data-tab"); // basic, search, tips
-        console.log("targetTab", targetTab);
 
         // 모든 탭 비활성화(색상 변경)
         tabBtns.forEach((tab) => tab.classList.remove("active"));
@@ -239,7 +233,6 @@ class PokemonDex {
   // 포켓몬 로드 함수 (한국어 이름 지원)
   async loadPokemon(id) {
     try {
-      console.log(`${id}번 포켓몬 로드 중`);
 
       // PokeAPI에서 포켓몬 정보 가져오기
       const res = await fetch(`${API_URL}/${id}`);
@@ -248,7 +241,6 @@ class PokemonDex {
       if (!res.ok) {
         throw new Error("포켓몬 정보 가져오기 실패");
       }
-      console.log("포켓몬 정보 가져오기 성공", data);
 
       // 한국어 이름 가져오기
       const koreanName = await this.getKoreanPokemonName(data);
@@ -266,11 +258,9 @@ class PokemonDex {
       // 캐시에서 먼저 확인
       if (this.koreanNameCache.has(pokemonData.id)) {
         const cachedName = this.koreanNameCache.get(pokemonData.id);
-        console.log(`캐시에서 가져옴: ${pokemonData.name} -> ${cachedName}`);
         return cachedName;
       }
 
-      console.log(`${pokemonData.name}의 한국어 이름 가져오는 중...`);
 
       // species API에서 한국어 이름 가져오기
       const speciesRes = await fetch(pokemonData.species.url);
@@ -287,7 +277,6 @@ class PokemonDex {
       // 캐시에 저장
       this.koreanNameCache.set(pokemonData.id, result);
 
-      console.log(`${pokemonData.name} -> ${result}`);
 
       return result;
     } catch (error) {
@@ -298,13 +287,6 @@ class PokemonDex {
   }
 
   updatePokemonDisplay(data, koreanName = null) {
-    console.log("=== 포켓몬 업데이트 시작 ===");
-    console.log("포켓몬 데이터:", data);
-    console.log("이미지 URL:", data.sprites.front_default);
-    console.log(
-      "현재 스피너 상태:",
-      this.imageLoadingSpinner.classList.contains("hidden")
-    );
 
     this.showImageLoading();
 
@@ -319,7 +301,6 @@ class PokemonDex {
 
     const timestamp = new Date().getTime();
     const imageUrl = `${data.sprites.front_default}?t=${timestamp}`;
-    console.log("🔄 이미지 URL 설정:", imageUrl);
 
     this.pokemonImage.src = imageUrl;
 
@@ -374,7 +355,6 @@ class PokemonDex {
     }
 
     try {
-      console.log(`${searchWord} 검색 중...`);
 
       // 검색 스피너 표시
       this.showSearchSpinner();
@@ -435,18 +415,15 @@ class PokemonDex {
       await this.loadPokemon(data.id);
     } catch (error) {
       // 영어 이름으로 정확한 검색이 실패하면 부분 검색 시도 (한국어 이름 포함)
-      console.log(`영어 이름 "${searchWord}" 검색 실패, 부분 검색으로 전환`);
       await this.searchByPartialName(searchWord);
     }
   }
 
   // 부분 검색 (한국어 이름 지원, 캐시 활용)
   async searchByPartialName(searchWord) {
-    console.log(`🔍 부분 검색 시작: "${searchWord}" (처음 50마리에서 검색)`);
 
     // 검색 범위를 50개로 제한 (성능 최적화)
     const searchRange = Math.min(50, this.totalPokemon);
-    const startTime = performance.now();
     const matchingPokemon = [];
 
     // 배치 단위로 병렬 처리 (성능 최적화)
@@ -472,15 +449,9 @@ class PokemonDex {
         for (const result of batchResults) {
           if (result) {
             matchingPokemon.push(result);
-            console.log(
-              `✅ 매칭됨: ${result.data.name} (${result.koreanName})`
-            );
 
             // 5개 찾으면 조기 종료 (빠른 응답)
             if (matchingPokemon.length >= 5) {
-              console.log(
-                `⚡ 조기 종료: ${matchingPokemon.length}개 결과 발견`
-              );
               break;
             }
           }
@@ -495,13 +466,6 @@ class PokemonDex {
       }
     }
 
-    // 성능 측정 완료
-    const endTime = performance.now();
-    console.log(
-      `🚀 검색 완료: ${matchingPokemon.length}개 결과, ${(
-        endTime - startTime
-      ).toFixed(2)}ms 소요`
-    );
 
     // 검색 스피너 숨기기
     this.hideSearchSpinner();
@@ -520,7 +484,6 @@ class PokemonDex {
       this.currentPokemonId = matchingPokemon[0].id;
       await this.loadPokemon(matchingPokemon[0].id);
 
-      console.log(`${matchingPokemon.length}개의 포켓몬을 찾았습니다.`);
     } else {
       this.showSearchError();
     }
@@ -572,7 +535,6 @@ class PokemonDex {
       const startId = (this.currentListPage - 1) * this.itemsPerPage + 1;
       this.createPokemonList(startId, this.itemsPerPage);
       this.updateListPageInfo();
-      console.log(`목록 페이지 ${this.currentListPage}로 이동`);
     }
   }
 
@@ -584,7 +546,6 @@ class PokemonDex {
       const startId = (this.currentListPage - 1) * this.itemsPerPage + 1;
       this.createPokemonList(startId, this.itemsPerPage);
       this.updateListPageInfo();
-      console.log(`목록 페이지 ${this.currentListPage}로 이동`);
     }
   }
 
@@ -900,8 +861,7 @@ class PokemonDex {
 
     // 비디오 로드 완료 후 준비
     this.video.addEventListener("loadeddata", () => {
-      console.log("음악 파일 로드 완료");
-      console.log("비디오 준비 상태:", this.video.readyState);
+      // 음악 파일 로드 완료
     }); //readyState: 4가 나와야 비디오 재생 가능(0~4 값 존재)
 
     // 에러 처리
@@ -915,7 +875,6 @@ class PokemonDex {
       () => {
         if (this.video.muted) {
           this.video.muted = false; // 음소거 해제
-          console.log("사용자 상호작용으로 음소거 해제됨");
         }
       },
       {
@@ -939,29 +898,16 @@ class PokemonDex {
 
   // 음악 재생
   playMusic() {
-    console.log("=== 음악 재생 시도 ===");
-    console.log("재생 전 음소거 상태:", this.video.muted);
-    console.log("재생 전 볼륨:", this.video.volume);
-    console.log("재생 전 일시정지 상태:", this.video.paused);
 
     this.video.muted = false; // 음소거 해제
     this.video.volume = 0.3; // 볼륨 재설정
 
-    console.log("음소거 해제 후 상태:", this.video.muted);
-    console.log("볼륨 설정 후:", this.video.volume);
 
     this.video
       .play()
       .then(() => {
-        console.log("음악 재생 시작 성공!");
-        console.log("재생 후 일시정지 상태:", this.video.paused);
-        console.log("재생 후 음소거 상태:", this.video.muted);
-        console.log("재생 후 볼륨:", this.video.volume);
-
         this.isMusicPlaying = true;
         this.musicBtn.classList.add("playing");
-        console.log("🎵 음악 재생 상태로 변경 - 포켓볼 GIF 표시됨");
-        console.log("버튼 클래스:", this.musicBtn.className);
       })
       .catch((error) => {
         console.error("음악 재생 실패:", error);
@@ -976,22 +922,18 @@ class PokemonDex {
     this.video.muted = true; // 음소거 처리
     this.isMusicPlaying = false;
     this.musicBtn.classList.remove("playing");
-    console.log("⏸️ 음악 정지 상태로 변경 - 텍스트 아이콘 표시됨");
-    console.log("버튼 클래스:", this.musicBtn.className);
   }
 
   // ================== 이미지 로딩 기능 ==================
 
   // 이미지 로딩 시작
   showImageLoading() {
-    console.log("이미지 로딩 시작");
     this.imageLoadingSpinner.classList.remove("hidden");
     this.pokemonImage.classList.remove("loaded");
   }
 
   // 이미지 로딩 완료
   hiddenImageLoading() {
-    console.log("이미지 로딩 완료");
     this.imageLoadingSpinner.classList.add("hidden");
     this.pokemonImage.classList.add("loaded");
   }
@@ -999,13 +941,11 @@ class PokemonDex {
   // 이미지 로딩 이벤트 설정
   setupImageLoadingEvent() {
     this.pokemonImage.addEventListener("load", () => {
-      console.log("로딩 완료");
       this.hiddenImageLoading();
     });
 
     this.pokemonImage.addEventListener("error", () => {
       this.hiddenImageLoading();
-      console.error("로딩 실패");
     });
   }
 }
