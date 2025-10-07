@@ -72,7 +72,7 @@ class PokemonDex {
     }
   }
 
-  // 포켓몬 목록 생성
+  // 포켓몬 목록 생성 (한국어 이름 지원)
   async createPokemonList(startId = 1, count = 10) {
     console.log("포켓몬 목록 생성 시작");
     this.pokemonListContainer.innerHTML = "";
@@ -82,11 +82,14 @@ class PokemonDex {
         const response = await fetch(`${API_URL}/${i}`);
         const data = await response.json();
 
-        // 포켓몬 아이템 생성 (내용 포함)
-        const pokemonItem = this.createPokemonListItem(data, i);
+        // 한국어 이름 가져오기
+        const koreanName = await this.getKoreanPokemonName(data);
+
+        // 포켓몬 아이템 생성 (한국어 이름 포함)
+        const pokemonItem = this.createPokemonListItem(data, i, koreanName);
         this.pokemonListContainer.appendChild(pokemonItem);
 
-        console.log(`포켓몬 ${i} 추가됨:`, data.name);
+        console.log(`포켓몬 ${i} 추가됨:`, koreanName || data.name);
       } catch (err) {
         console.error(`포켓몬 ${i} 정보 가져오기 실패`, err);
       }
@@ -95,7 +98,7 @@ class PokemonDex {
     console.log("포켓몬 목록 생성 완료");
   }
 
-  // 이벤트 리스너 설정
+  // 버튼 이벤트 리스너 설정
   setupEventListeners() {
     // 이전 포켓몬 버튼 ▼
     this.prevBtn.addEventListener("click", () => {
@@ -160,58 +163,60 @@ class PokemonDex {
 
   // 사용법 가이드 이벤트 설정
   setupGuideEvents() {
-    const guideToggle = document.getElementById("guide-toggle");
-    const guideModal = document.getElementById("guide-modal");
-    const guideClose = document.getElementById("guide-close");
-    const guideHelpful = document.getElementById("guide-helpful");
-    const tabBtns = document.querySelectorAll(".tab-btn");
-    const tabContents = document.querySelectorAll(".tab-content");
+    // 이벤트 리스너가 필요한 요소들만 선택
+    const guideToggle = document.getElementById("guide-toggle"); // ? 사용법 열기
+    const guideModal = document.getElementById("guide-modal"); // 포켓몬 도감 사용법
+    const guideClose = document.getElementById("guide-close"); // 포켓몬 도감 사용법 닫기
+    const tabBtns = document.querySelectorAll(".tab-btn"); // 포켓몬 도감 사용법 탭
+    const tabContents = document.querySelectorAll(".tab-content"); // 포켓몬 도감 사용법 탭 내용
 
     // 가이드 모달 열기
     guideToggle.addEventListener("click", () => {
       guideModal.classList.add("active");
-      document.body.style.overflow = "hidden"; // 스크롤 방지
     });
 
     // 가이드 모달 닫기
     guideClose.addEventListener("click", () => {
       guideModal.classList.remove("active");
-      document.body.style.overflow = ""; // 스크롤 복원
     });
 
     // 모달 외부 클릭 시 닫기
     guideModal.addEventListener("click", (e) => {
+      console.log("실제로 클릭된 e.target", e.target);
       if (e.target === guideModal) {
         guideModal.classList.remove("active");
-        document.body.style.overflow = "";
       }
     });
 
-    // ESC 키로 모달 닫기
+    // ESC 키로 모달 닫기(guideModal에 addEventListener을 붙이지 않은 이유)
     document.addEventListener("keydown", (e) => {
+      // e.key는 눌린 키의 값
       if (e.key === "Escape" && guideModal.classList.contains("active")) {
         guideModal.classList.remove("active");
-        document.body.style.overflow = "";
       }
     });
 
     // 탭 전환(사용법 모달 - 메뉴)
     tabBtns.forEach((btn) => {
       btn.addEventListener("click", () => {
-        const targetTab = btn.getAttribute("data-tab");
+        const targetTab = btn.getAttribute("data-tab"); // basic, search, tips
+        console.log("targetTab", targetTab);
 
-        // 모든 탭 비활성화
-        tabBtns.forEach((b) => b.classList.remove("active"));
-        tabContents.forEach((c) => c.classList.remove("active"));
+        // 모든 탭 비활성화(색상 변경)
+        tabBtns.forEach((tab) => tab.classList.remove("active"));
+        // 모든 콘텐츠 숨김(display: none)
+        tabContents.forEach((content) => content.classList.remove("active"));
 
         // 선택된 탭 활성화
         btn.classList.add("active");
         document.getElementById(`${targetTab}-tab`).classList.add("active");
+
+        // basic-tab, search-tab, tips-tab
       });
     });
   }
 
-  // 포켓몬 로드 함수 (아직 안 만듦)
+  // 포켓몬 로드 함수 (한국어 이름 지원)
   async loadPokemon(id) {
     try {
       console.log(`${id}번 포켓몬 로드 중`);
@@ -225,14 +230,43 @@ class PokemonDex {
       }
       console.log("포켓몬 정보 가져오기 성공", data);
 
-      // 포캣몬 정보 표시
-      this.updatePokemonDisplay(data);
+      // 한국어 이름 가져오기
+      const koreanName = await this.getKoreanPokemonName(data);
+
+      // 포켓몬 정보 표시 (한국어 이름 포함)
+      this.updatePokemonDisplay(data, koreanName);
     } catch (error) {
       console.error("포켓몬 로드 실패", error);
     }
   }
 
-  updatePokemonDisplay(data) {
+  // 한국어 포켓몬 이름 가져오기 함수
+  async getKoreanPokemonName(pokemonData) {
+    try {
+      console.log(`${pokemonData.name}의 한국어 이름 가져오는 중...`);
+
+      // species API에서 한국어 이름 가져오기
+      const speciesRes = await fetch(pokemonData.species.url);
+      const speciesData = await speciesRes.json();
+
+      // 한국어 이름 찾기
+      const koreanNameObj = speciesData.names.find(
+        (n) => n.language.name === "ko"
+      );
+
+      // 한국어 이름이 있으면 반환, 없으면 영어 이름 반환
+      const result = koreanNameObj ? koreanNameObj.name : pokemonData.name;
+      console.log(`${pokemonData.name} -> ${result}`);
+
+      return result;
+    } catch (error) {
+      console.error("한국어 이름 가져오기 실패:", error);
+      // 에러 발생 시 영어 이름 반환
+      return pokemonData.name;
+    }
+  }
+
+  updatePokemonDisplay(data, koreanName = null) {
     console.log("=== 포켓몬 업데이트 시작 ===");
     console.log("포켓몬 데이터:", data);
     console.log("이미지 URL:", data.sprites.front_default);
@@ -273,8 +307,8 @@ class PokemonDex {
     // 2. 포켓몬 번호 설정(padStart 메서드: 앞에 0을 붙여서 3자리로 만듦)
     this.pokemonNumber.textContent = `#${String(data.id).padStart(3, "0")}`;
 
-    // 3. 포켓몬 이름 설정
-    this.pokemonName.textContent = data.name;
+    // 3. 포켓몬 이름 설정 (한국어 이름 우선 사용)
+    this.pokemonName.textContent = koreanName || data.name;
 
     // 4. 포켓몬 타입 설정(타입 처리가 관건)
     this.updatePokemonTypes(data.types);
@@ -326,7 +360,7 @@ class PokemonDex {
     }
   }
 
-  // ID로 검색
+  // ID로 검색 (한국어 이름 지원)
   async searchById(searchId) {
     this.currentPokemonId = searchId;
     await this.loadPokemon(searchId);
@@ -335,20 +369,27 @@ class PokemonDex {
     this.pokemonListContainer.innerHTML = "";
     const response = await fetch(`${API_URL}/${searchId}`);
     const data = await response.json();
-    const pokemonItem = this.createPokemonListItem(data, searchId);
+
+    // 한국어 이름 가져오기
+    const koreanName = await this.getKoreanPokemonName(data);
+
+    const pokemonItem = this.createPokemonListItem(data, searchId, koreanName);
     this.pokemonListContainer.appendChild(pokemonItem);
   }
 
-  // 이름으로 검색 (부분 검색 지원)
+  // 이름으로 검색 (부분 검색 지원, 한국어 이름 지원)
   async searchByName(searchWord) {
     try {
       // 먼저 정확한 이름으로 시도
       const response = await fetch(`${API_URL}/${searchWord.toLowerCase()}`);
       const data = await response.json();
 
+      // 한국어 이름 가져오기
+      const koreanName = await this.getKoreanPokemonName(data);
+
       // 검색 결과를 목록에 표시
       this.pokemonListContainer.innerHTML = "";
-      const pokemonItem = this.createPokemonListItem(data, data.id);
+      const pokemonItem = this.createPokemonListItem(data, data.id, koreanName);
       this.pokemonListContainer.appendChild(pokemonItem);
 
       // 포켓몬 로드
@@ -400,10 +441,12 @@ class PokemonDex {
     this.pokemonListContainer.innerHTML = "";
 
     if (matchingPokemon.length > 0) {
-      matchingPokemon.forEach(({ data, id }) => {
-        const pokemonItem = this.createPokemonListItem(data, id);
+      // 각 매칭된 포켓몬에 대해 한국어 이름을 가져와서 목록에 추가
+      for (const { data, id } of matchingPokemon) {
+        const koreanName = await this.getKoreanPokemonName(data);
+        const pokemonItem = this.createPokemonListItem(data, id, koreanName);
         this.pokemonListContainer.appendChild(pokemonItem);
-      });
+      }
 
       // 첫 번째 결과를 선택
       this.currentPokemonId = matchingPokemon[0].id;
@@ -430,8 +473,8 @@ class PokemonDex {
     `;
   }
 
-  // 포켓몬 아이템 생성 함수
-  createPokemonListItem(data, id) {
+  // 포켓몬 아이템 생성 함수 (한국어 이름 지원)
+  createPokemonListItem(data, id, koreanName = null) {
     const item = document.createElement("div");
     item.className = "pokemon-list-item";
     item.dataset.pokemonId = id;
@@ -446,15 +489,19 @@ class PokemonDex {
       .map((type) => this.getKoreanTypeName(type.type.name))
       .join(", ");
 
+    // 표시할 이름 결정 (한국어 이름 우선)
+    const displayName = koreanName || data.name;
+
     // 내용 추가
     item.innerHTML = `
       <div class="pokemon-list-item-content">
-        <img src="${data.sprites.front_default}" alt="${data.name}" 
+        <img src="${data.sprites.front_default}" alt="${displayName}" 
              onerror="this.src='./src/assets/images/pokeball.png'">
         <div class="pokemon-list-item-info">
-          <div class="pokemon-list-item-name">#${String(id).padStart(3, "0")} ${
-      data.name
-    }</div>
+          <div class="pokemon-list-item-name">#${String(id).padStart(
+            3,
+            "0"
+          )} ${displayName}</div>
           <div class="pokemon-list-item-types">${types}</div>
         </div>
       </div>
@@ -695,7 +742,7 @@ class PokemonDex {
     this.video.addEventListener("loadeddata", () => {
       console.log("음악 파일 로드 완료");
       console.log("비디오 준비 상태:", this.video.readyState);
-    });
+    }); //readyState: 4가 나와야 비디오 재생 가능(0~4 값 존재)
 
     // 에러 처리
     this.video.addEventListener("error", (e) => {
@@ -707,11 +754,13 @@ class PokemonDex {
       "click",
       () => {
         if (this.video.muted) {
-          this.video.muted = false;
+          this.video.muted = false; // 음소거 해제
           console.log("사용자 상호작용으로 음소거 해제됨");
         }
       },
-      { once: true }
+      {
+        once: true,
+      }
     );
 
     this.musicBtn.addEventListener("click", () => {
